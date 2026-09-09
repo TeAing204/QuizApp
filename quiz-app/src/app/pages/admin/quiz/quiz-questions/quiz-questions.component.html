@@ -1,0 +1,106 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="mb-8">
+    <a routerLink="/admin/quizzes" class="text-sm text-gray-500 hover:text-primary-600 transition-colors mb-2 inline-block">
+      <i class="fas fa-arrow-left mr-1"></i> Back to Quizzes
+    </a>
+    @if (quiz) {
+      <h1 class="section-title"><i class="fas fa-list-ol text-purple-500 mr-2"></i>{{ quiz.title }}</h1>
+      <p class="text-gray-500">Manage questions assigned to this quiz</p>
+    }
+  </div>
+
+  @if (isLoading) {
+    <div class="text-center py-20"><i class="fas fa-spinner fa-spin text-3xl text-primary-500"></i></div>
+  } @else {
+    <!-- Stats -->
+    <div class="flex items-center gap-4 mb-6">
+      <div class="card px-4 py-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+          <i class="fas fa-question-circle text-blue-600"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">{{ assignedQuestions.length }}</p>
+          <p class="text-xs text-gray-500">Questions</p>
+        </div>
+      </div>
+      <div class="card px-4 py-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+          <i class="fas fa-database text-green-600"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">{{ availableQuestions.length }}</p>
+          <p class="text-xs text-gray-500">Available</p>
+        </div>
+      </div>
+      <button (click)="openAddModal()" class="btn-primary ml-auto">
+        <i class="fas fa-plus mr-2"></i> Add Questions
+      </button>
+    </div>
+
+    <!-- Assigned Questions -->
+    @if (assignedQuestions.length === 0) {
+      <div class="text-center py-16 card p-8">
+        <i class="fas fa-clipboard text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">No questions assigned yet</p>
+        <button (click)="openAddModal()" class="btn-primary mt-4">Add questions from bank</button>
+      </div>
+    } @else {
+      <div class="space-y-3">
+        @for (q of assignedQuestions; track q.id; let i = $index) {
+          <div class="card p-4 border border-gray-100 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+              <span class="text-xs font-bold text-primary-700">{{ i + 1 }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-gray-900 text-sm">{{ q.content }}</p>
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 mt-1 inline-block">{{ q.questionType }}</span>
+            </div>
+            <button (click)="removeQuestion(q.id)"
+                    class="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors flex-shrink-0" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- ADD QUESTIONS MODAL -->
+  @if (showAddModal) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeAddModal()">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col" (click)="$event.stopPropagation()">
+        <div class="p-6 border-b border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900"><i class="fas fa-plus-circle text-primary-500 mr-2"></i>Add Questions</h2>
+          <div class="mt-3 relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-search"></i></span>
+            <input type="text" [(ngModel)]="addSearchTerm" (input)="onAddSearch()" placeholder="Search available questions..."
+                   class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none" />
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-2">
+          @if (filteredAvailable.length === 0) {
+            <p class="text-center text-gray-400 py-8">No available questions</p>
+          }
+          @for (q of filteredAvailable; track q.id) {
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-primary-200 hover:bg-primary-50/50 transition-all">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ q.content }}</p>
+                <span class="text-xs text-purple-600">{{ q.questionType }}</span>
+              </div>
+              <button (click)="addQuestion(q.id)"
+                      class="px-3 py-1.5 bg-primary-500 text-white rounded-lg text-xs font-medium hover:bg-primary-600 transition-colors flex-shrink-0">
+                <i class="fas fa-plus mr-1"></i> Add
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="p-4 border-t border-gray-100">
+          <button (click)="closeAddModal()" class="btn-secondary w-full">Done</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

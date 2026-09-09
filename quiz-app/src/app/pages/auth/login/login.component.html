@@ -1,0 +1,97 @@
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
+  <div class="w-full max-w-md">
+
+    <!-- Card -->
+    <div class="card p-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-500/25">
+          <i class="fas fa-sign-in-alt text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">Welcome Back</h1>
+        <p class="text-gray-500 text-sm mt-1">Sign in to your account to continue</p>
+      </div>
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <i class="fas fa-exclamation-circle"></i>
+          <span class="text-sm">{{ errorMessage }}</span>
+        </div>
+      }
+
+      <!-- Form -->
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+
+        <!-- Username -->
+        <div class="mb-5">
+          <label for="userName" class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-user"></i>
+            </span>
+            <input
+              type="text"
+              id="userName"
+              name="userName"
+              [(ngModel)]="loginDto.userName"
+              required
+              placeholder="Enter your username"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-sm
+                     focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none
+                     transition-all duration-200 bg-gray-50 focus:bg-white"
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fas fa-lock"></i>
+            </span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="loginDto.password"
+              required
+              placeholder="Enter your password"
+              class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg text-sm
+                     focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none
+                     transition-all duration-200 bg-gray-50 focus:bg-white"
+            />
+            <button type="button" (click)="togglePassword()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                [disabled]="loginForm.invalid || isLoading"
+                class="w-full btn-primary py-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (isLoading) {
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Signing in...</span>
+          } @else {
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Sign In</span>
+          }
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500">
+          Don't have an account?
+          <a routerLink="/auth/register" class="text-primary-600 font-medium hover:text-primary-700 transition-colors">
+            Create one
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

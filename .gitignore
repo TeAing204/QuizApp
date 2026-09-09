@@ -1,0 +1,28 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.user
+*.rsuser
+
+# Rider
+.idea/
+
+# Test results
+TestResults/
+
+# NuGet
+packages/
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+appsettings.Development.json

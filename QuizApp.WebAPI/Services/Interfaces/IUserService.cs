@@ -9,5 +9,6 @@ namespace QuizApp.WebAPI.Services.Interfaces
         Task<bool> CreateAsync(UserCreateDto dto);
         Task<bool> UpdateAsync(UserEditDto dto);
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordDto dto);
     }
 }

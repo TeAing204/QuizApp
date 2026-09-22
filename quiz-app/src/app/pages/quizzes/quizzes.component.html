@@ -1,0 +1,122 @@
+<div class="page-container animate-fade-in">
+
+  <!-- Hero Section -->
+  <div class="text-center mb-10">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent mb-3">
+      Khám Phá Bài Quiz
+    </h1>
+    <p class="text-gray-500 text-lg max-w-2xl mx-auto">
+      Chọn một bài quiz để thử sức hoặc nhập mã đề thi để tham gia ngay.
+    </p>
+  </div>
+
+  <!-- Quiz Code + Search Bar -->
+  <div class="max-w-4xl mx-auto mb-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- Search -->
+    <div class="relative">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input type="text"
+             [(ngModel)]="searchTerm"
+             (ngModelChange)="onSearch()"
+             placeholder="Tìm kiếm bài quiz..."
+             class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
+                    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                    shadow-sm hover:shadow transition-shadow" />
+    </div>
+
+    <!-- Quiz Code Input -->
+    <form (ngSubmit)="joinByCode()" class="relative flex gap-2">
+      <div class="flex-1 relative">
+        <i class="fas fa-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input type="text"
+               [(ngModel)]="quizCode"
+               name="quizCode"
+               placeholder="Nhập mã đề thi..."
+               class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
+                      focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent
+                      shadow-sm hover:shadow transition-shadow" />
+      </div>
+      <button type="submit"
+              class="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-xl font-medium
+                     hover:shadow-lg hover:shadow-accent-500/25 transition-all duration-200 text-sm whitespace-nowrap">
+        <i class="fas fa-play mr-1.5"></i> Tham gia
+      </button>
+    </form>
+  </div>
+
+  <!-- Quiz Code Error -->
+  @if (codeError) {
+    <div class="max-w-4xl mx-auto mb-6">
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ codeError }}
+      </div>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="flex justify-center items-center py-20">
+      <div class="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && filteredQuizzes.length === 0) {
+    <div class="text-center py-20">
+      <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-clipboard-list text-3xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-600 mb-1">Không tìm thấy bài quiz</h3>
+      <p class="text-gray-400 text-sm">
+        @if (searchTerm) {
+          Thử tìm kiếm với từ khóa khác.
+        } @else {
+          Chưa có bài quiz nào được xuất bản.
+        }
+      </p>
+    </div>
+  }
+
+  <!-- Quiz Grid -->
+  @if (!isLoading && filteredQuizzes.length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (quiz of filteredQuizzes; track quiz.id) {
+        <div class="card group cursor-pointer" (click)="startQuiz(quiz.id)">
+          <!-- Thumbnail -->
+          <div class="relative overflow-hidden h-40 bg-gradient-to-br from-primary-100 to-accent-100">
+            @if (quiz.thumbnailUrl) {
+              <img [src]="quiz.thumbnailUrl" [alt]="quiz.title"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            } @else {
+              <div class="w-full h-full flex items-center justify-center">
+                <i class="fas fa-brain text-5xl text-primary-300"></i>
+              </div>
+            }
+            <div class="absolute top-3 right-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 shadow-sm">
+              <i class="fas fa-clock mr-1 text-primary-500"></i> {{ quiz.duration | durationFormat }}
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="p-4">
+            <h3 class="font-semibold text-gray-900 mb-1.5 group-hover:text-primary-600 transition-colors line-clamp-2">
+              {{ quiz.title }}
+            </h3>
+            <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ quiz.description }}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">
+                <i class="fas fa-question-circle mr-1"></i> {{ quiz.numberOfQuestions }} câu hỏi
+              </span>
+              <span class="text-xs font-medium text-primary-600 group-hover:text-primary-700">
+                Bắt đầu <i class="fas fa-arrow-right ml-1"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>

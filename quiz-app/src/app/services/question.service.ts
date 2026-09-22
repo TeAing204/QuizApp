@@ -1,61 +1,56 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { QuestionViewModel, QuestionCreateDto, QuestionEditDto, AnswerViewModel, AnswerCreateDto, AnswerEditDto } from '../models/question.model';
-import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
   private apiUrl = `${environment.apiUrl}/questions`;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
-
-  private get headers(): HttpHeaders {
-    return new HttpHeaders({ Authorization: `Bearer ${this.authService.getToken()}` });
-  }
+  constructor(private http: HttpClient) {}
 
   // ===== Question CRUD =====
 
   getAll(): Observable<QuestionViewModel[]> {
-    return this.http.get<QuestionViewModel[]>(this.apiUrl, { headers: this.headers });
+    return this.http.get<QuestionViewModel[]>(this.apiUrl);
   }
 
   getById(id: string): Observable<QuestionViewModel> {
-    return this.http.get<QuestionViewModel>(`${this.apiUrl}/${id}`, { headers: this.headers });
+    return this.http.get<QuestionViewModel>(`${this.apiUrl}/${id}`);
   }
 
-  create(dto: QuestionCreateDto): Observable<boolean> {
-    return this.http.post<boolean>(this.apiUrl, dto, { headers: this.headers });
+  create(dto: QuestionCreateDto): Observable<any> {
+    return this.http.post<any>(this.apiUrl, dto);
   }
 
   update(id: string, dto: QuestionEditDto): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/${id}`, dto, { headers: this.headers });
+    return this.http.put<boolean>(`${this.apiUrl}/${id}`, dto);
   }
 
   delete(id: string): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`, { headers: this.headers });
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }
 
   // ===== Answer CRUD (nested under question) =====
 
   getAnswers(questionId: string): Observable<AnswerViewModel[]> {
-    return this.http.get<AnswerViewModel[]>(`${this.apiUrl}/${questionId}/answers`, { headers: this.headers });
+    return this.http.get<AnswerViewModel[]>(`${this.apiUrl}/${questionId}/answers`);
   }
 
   getAnswerById(answerId: string): Observable<AnswerViewModel> {
-    return this.http.get<AnswerViewModel>(`${this.apiUrl}/answers/${answerId}`, { headers: this.headers });
+    return this.http.get<AnswerViewModel>(`${this.apiUrl}/answers/${answerId}`);
   }
 
   addAnswer(questionId: string, dto: AnswerCreateDto): Observable<boolean> {
-    return this.http.post<boolean>(`${this.apiUrl}/${questionId}/answers`, dto, { headers: this.headers });
+    return this.http.post<boolean>(`${this.apiUrl}/${questionId}/answers`, dto);
   }
 
   updateAnswer(answerId: string, dto: AnswerEditDto): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/answers/${answerId}`, dto, { headers: this.headers });
+    return this.http.put<boolean>(`${this.apiUrl}/answers/${answerId}`, dto);
   }
 
   deleteAnswer(questionId: string, answerId: string): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${questionId}/answers/${answerId}`, { headers: this.headers });
+    return this.http.delete<boolean>(`${this.apiUrl}/${questionId}/answers/${answerId}`);
   }
 }

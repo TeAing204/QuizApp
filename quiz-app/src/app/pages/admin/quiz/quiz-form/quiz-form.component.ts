@@ -137,11 +137,23 @@ export class AdminQuizFormComponent implements OnInit {
       this.quizService.create(dto).subscribe({
         next: (res: any) => {
           this.isSaving = false;
+          // Backend có thể trả về object {id: ...} hoặc string ID trực tiếp
+          let newId = '';
           if (res && typeof res === 'object' && res.id) {
-            this.isEditMode = true;
-            this.quizId = res.id;
+            newId = res.id;
+          } else if (typeof res === 'string' && res.length > 0) {
+            newId = res;
           }
-          this.successMessage = 'Đã tạo quiz! Bây giờ hãy thêm câu hỏi.';
+
+          if (newId) {
+            this.isEditMode = true;
+            this.quizId = newId;
+            // Navigate sang URL edit để đảm bảo state đúng
+            this.router.navigate(['/admin/quizzes', newId, 'edit'], { replaceUrl: true });
+            this.successMessage = 'Đã tạo quiz! Bây giờ hãy thêm câu hỏi.';
+          } else {
+            this.successMessage = 'Đã tạo quiz! Vui lòng vào danh sách quiz để chỉnh sửa và thêm câu hỏi.';
+          }
           setTimeout(() => this.successMessage = '', 4000);
         },
         error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Tạo thất bại.'; }
@@ -240,48 +252,66 @@ export class AdminQuizFormComponent implements OnInit {
     };
 
     this.questionService.create(createDto).subscribe({
-      next: () => {
-        this.questionService.getAll().subscribe({
-          next: (all) => {
-            const createdQ = all[0];
-            if (createdQ) {
-              let count = 0;
-              const totalAns = this.newQuestion.answers.length;
-              const onAnsDone = () => {
-                if (this.isEditMode && this.quizId) {
-                  this.quizService.addQuestion({ quizId: this.quizId, questionId: createdQ.id }).subscribe({
-                    next: () => {
-                      this.loadQuizQuestions();
-                      this.finishQuestionCreation();
-                    },
-                    error: () => this.finishQuestionCreation()
-                  });
-                } else {
-                  this.finishQuestionCreation();
-                }
-              };
+      next: (createRes: any) => {
+        // Thử lấy ID từ response trước
+        let questionId = '';
+        if (createRes && typeof createRes === 'object' && createRes.id) {
+          questionId = createRes.id;
+        } else if (typeof createRes === 'string' && createRes.length > 0) {
+          questionId = createRes;
+        }
 
-              if (totalAns === 0) {
-                onAnsDone();
-              } else {
-                this.newQuestion.answers.forEach(a => {
-                  const ansDto: AnswerCreateDto = {
-                    content: a.content,
-                    isCorrect: a.isCorrect,
-                    isActive: true,
-                    questionId: createdQ.id
-                  };
-                  this.questionService.addAnswer(createdQ.id, ansDto).subscribe({
-                    next: () => { count++; if (count === totalAns) onAnsDone(); },
-                    error: () => { count++; if (count === totalAns) onAnsDone(); }
-                  });
-                });
-              }
+        const processQuestion = (qId: string) => {
+          let count = 0;
+          const totalAns = this.newQuestion.answers.length;
+          const onAnsDone = () => {
+            if (this.isEditMode && this.quizId) {
+              this.quizService.addQuestion({ quizId: this.quizId, questionId: qId }).subscribe({
+                next: () => {
+                  this.loadQuizQuestions();
+                  this.finishQuestionCreation();
+                },
+                error: () => this.finishQuestionCreation()
+              });
             } else {
               this.finishQuestionCreation();
             }
+          };
+
+          if (totalAns === 0) {
+            onAnsDone();
+          } else {
+            this.newQuestion.answers.forEach(a => {
+              const ansDto: AnswerCreateDto = {
+                content: a.content,
+                isCorrect: a.isCorrect,
+                isActive: true,
+                questionId: qId
+              };
+              this.questionService.addAnswer(qId, ansDto).subscribe({
+                next: () => { count++; if (count === totalAns) onAnsDone(); },
+                error: () => { count++; if (count === totalAns) onAnsDone(); }
+              });
+            });
           }
-        });
+        };
+
+        if (questionId) {
+          // Nếu backend trả về ID trực tiếp → dùng luôn
+          processQuestion(questionId);
+        } else {
+          // Fallback: lấy danh sách và tìm câu hỏi cuối cùng (mới nhất)
+          this.questionService.getAll().subscribe({
+            next: (all) => {
+              const createdQ = all.length > 0 ? all[all.length - 1] : null;
+              if (createdQ) {
+                processQuestion(createdQ.id);
+              } else {
+                this.finishQuestionCreation();
+              }
+            }
+          });
+        }
       },
       error: (err) => {
         this.isCreatingQuestion = false;

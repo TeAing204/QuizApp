@@ -8,7 +8,7 @@ namespace QuizApp.WebAPI.Services.Interfaces
     {
         Task<List<QuizViewModel>> GetAllAsync();
         Task<QuizViewModel?> GetByIdAsync(Guid id);
-        Task<bool> CreateAsync(QuizCreateDto dto);
+        Task<Guid> CreateAsync(QuizCreateDto dto);
         Task<bool> UpdateAsync(QuizEditDto dto);
         Task<bool> DeleteAsync(Guid id);
         Task<bool> AddQuestionToQuizAsync(QuizQuestionCreateDto dto);
@@ -17,5 +17,7 @@ namespace QuizApp.WebAPI.Services.Interfaces
         Task<QuizPrepareInfoDto?> PrepareQuizAsync(PrepareQuizDto dto);
         Task<QuizForTestDto?> TakeQuizAsync(TakeQuizDto dto);
         Task<QuizResultDto?> SubmitQuizAsync(QuizSubmissionDto dto);
+        Task<List<QuizHistoryDto>> GetHistoryByUserIdAsync(Guid userId);
+        Task<AttemptDetailDto?> GetAttemptDetailAsync(Guid attemptId);
     }
 }

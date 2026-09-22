@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Lưu câu trả lời của user cho từng câu hỏi trong một lần thi.
-    /// Mỗi UserAnswer thuộc một QuizAttempt, tham chiếu đến Question và Answer đã chọn.
-    /// </summary>
+    // Lưu câu trả lời của user cho từng câu hỏi trong một lần thi.
+    // Mỗi UserAnswer thuộc một QuizAttempt, tham chiếu đến Question và Answer đã chọn.
     public class UserAnswer
     {
         [Key]

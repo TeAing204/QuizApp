@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { QuestionService } from '../../../../services/question.service';
 import { QuestionViewModel, QuestionCreateDto, AnswerCreateDto, AnswerViewModel } from '../../../../models/question.model';
 
@@ -13,7 +14,7 @@ interface AnswerInput {
 @Component({
   selector: 'app-admin-question-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PaginationComponent],
   templateUrl: './question-list.component.html'
 })
 export class AdminQuestionListComponent implements OnInit {
@@ -21,6 +22,10 @@ export class AdminQuestionListComponent implements OnInit {
   filteredQuestions: QuestionViewModel[] = [];
   searchTerm = '';
   isLoading = true;
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
 
   // Answers display per question (lazy loaded)
   questionAnswers: Map<string, AnswerViewModel[]> = new Map();
@@ -56,6 +61,16 @@ export class AdminQuestionListComponent implements OnInit {
   onSearch(): void {
     const term = this.searchTerm.toLowerCase();
     this.filteredQuestions = this.questions.filter(q => q.content.toLowerCase().includes(term));
+    this.currentPage = 1; // Reset to first page on search
+  }
+
+  get paginatedQuestions(): QuestionViewModel[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredQuestions.slice(start, start + this.pageSize);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
   }
 
   deleteQuestion(id: string, content: string): void {

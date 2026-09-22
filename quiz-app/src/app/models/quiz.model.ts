@@ -86,3 +86,45 @@ export interface QuizResultDto {
   correctAnswers: number;
   submittedAt: string;
 }
+
+/** Response: lịch sử làm bài của user */
+export interface QuizHistoryDto {
+  quizAttemptId: string;
+  quizId: string;
+  quizTitle: string;
+  quizDescription?: string;
+  duration: number;
+  thumbnailUrl?: string;
+  score?: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  startTime: string;
+  submittedAt?: string;
+  quizCode?: string;
+  status: string; // "Completed" | "InProgress"
+}
+
+/** Response: chi tiết một lần làm bài (xem lại) */
+export interface AttemptDetailDto {
+  quizAttemptId: string;
+  quizTitle: string;
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  startTime: string;
+  submittedAt?: string;
+  questions: AttemptQuestionDetailDto[];
+}
+
+export interface AttemptQuestionDetailDto {
+  questionContent: string;
+  questionType: string;
+  isCorrect: boolean;
+  answers: AttemptAnswerDetailDto[];
+}
+
+export interface AttemptAnswerDetailDto {
+  content: string;
+  isCorrect: boolean;
+  isSelected: boolean;
+}

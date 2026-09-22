@@ -76,5 +76,20 @@ namespace QuizApp.WebAPI.Services
             _context.Users.Remove(user);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordDto dto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new NotFoundException("User", userId);
+
+            // Verify old password
+            if (!PasswordHasher.VerifyPassword(dto.OldPassword, user.PasswordHash))
+                throw new BadRequestException("Mật khẩu cũ không đúng.");
+
+            // Hash & save new password
+            user.PasswordHash = PasswordHasher.HashPassword(dto.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

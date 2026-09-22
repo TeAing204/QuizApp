@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Bảng trung gian cho quan hệ Many-to-Many giữa Quiz và Question.
-    /// Cho phép một câu hỏi được dùng trong nhiều quiz (question bank).
-    /// </summary>
+    // Bảng trung gian cho quan hệ Many-to-Many giữa Quiz và Question.
+    // Cho phép một câu hỏi được dùng trong nhiều quiz (question bank).
     public class QuizQuestion
     {
         [Key]

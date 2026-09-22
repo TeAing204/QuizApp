@@ -1,0 +1,58 @@
+<div class="flex min-h-[calc(100vh-128px)]">
+
+  <!-- Sidebar -->
+  <aside class="bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 relative"
+         [class.w-64]="isSidebarOpen" [class.w-16]="!isSidebarOpen">
+
+    <!-- Toggle Button -->
+    <button (click)="toggleSidebar()"
+            class="absolute -right-3 top-6 w-6 h-6 bg-white border border-gray-200 rounded-full
+                   flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors z-10">
+      <i class="fas text-xs text-gray-500"
+         [class.fa-chevron-left]="isSidebarOpen"
+         [class.fa-chevron-right]="!isSidebarOpen"></i>
+    </button>
+
+    <!-- Sidebar Header -->
+    <div class="p-4 border-b border-gray-100">
+      @if (isSidebarOpen) {
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-cogs text-white text-sm"></i>
+          </div>
+          <span class="font-semibold text-gray-900 text-sm">Admin Panel</span>
+        </div>
+      } @else {
+        <div class="flex justify-center">
+          <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-cogs text-white text-sm"></i>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Menu Items -->
+    <nav class="p-3 space-y-1">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route"
+           routerLinkActive="bg-primary-50 text-primary-700 font-medium"
+           [routerLinkActiveOptions]="{ exact: item.route === '/admin/create' }"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600
+                  hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 group"
+           [title]="item.label">
+          <i [class]="item.icon + ' w-5 text-center text-gray-400 group-hover:text-primary-500'"
+             routerLinkActive="!text-primary-600"></i>
+          @if (isSidebarOpen) {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 bg-gray-50 overflow-auto">
+    <router-outlet />
+  </main>
+
+</div>

@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Lưu thông tin mỗi lần user làm một quiz.
-    /// Mỗi QuizAttempt thuộc đúng một User và một Quiz.
-    /// </summary>
+    // Lưu thông tin mỗi lần user làm một quiz.
+    // Mỗi QuizAttempt thuộc đúng một User và một Quiz.
     public class QuizAttempt
     {
         [Key]
@@ -26,9 +24,7 @@ namespace QuizApp.WebAPI.Models.Entities
         [ForeignKey("QuizId")]
         public Quiz Quiz { get; set; } = null!;
 
-        /// <summary>
-        /// Mã code dùng để vào thi (nếu có).
-        /// </summary>
+        // Mã code dùng để vào thi.
         [MaxLength(50)]
         public string? QuizCode { get; set; }
 
@@ -36,9 +32,7 @@ namespace QuizApp.WebAPI.Models.Entities
 
         public DateTime? SubmittedAt { get; set; }
 
-        /// <summary>
-        /// Điểm số sau khi chấm (0-100).
-        /// </summary>
+        // Điểm số sau khi chấm (0-100).
         public decimal? Score { get; set; }
 
         // Navigation: QuizAttempt → Nhiều UserAnswer

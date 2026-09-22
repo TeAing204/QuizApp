@@ -110,5 +110,21 @@ namespace QuizApp.WebAPI.Controllers
             var result = await _quizService.SubmitQuizAsync(dto);
             return Ok(result);
         }
+
+        [HttpGet("history/{userId}")]
+        [Authorize]
+        public async Task<IActionResult> GetHistory(Guid userId)
+        {
+            var history = await _quizService.GetHistoryByUserIdAsync(userId);
+            return Ok(history);
+        }
+
+        [HttpGet("attempts/{attemptId}")]
+        [Authorize]
+        public async Task<IActionResult> GetAttemptDetail(Guid attemptId)
+        {
+            var detail = await _quizService.GetAttemptDetailAsync(attemptId);
+            return Ok(detail);
+        }
     }
 }

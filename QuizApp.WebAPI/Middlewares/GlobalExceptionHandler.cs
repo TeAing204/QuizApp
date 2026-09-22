@@ -5,11 +5,9 @@ using QuizApp.WebAPI.Models.DTOs.Common;
 
 namespace QuizApp.WebAPI.Middlewares
 {
-    /// <summary>
-    /// Middleware xử lý exception toàn cục.
-    /// Bắt tất cả exception từ service layer, tự động map sang HTTP status code
-    /// và trả về ErrorResponse chuẩn hóa.
-    /// </summary>
+    // Middleware xử lý exception toàn cục.
+    // Bắt tất cả exception từ service layer, tự động map sang HTTP status code
+    // và trả về ErrorResponse chuẩn hóa.
     public class GlobalExceptionHandler
     {
         private readonly RequestDelegate _next;

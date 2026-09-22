@@ -1,0 +1,202 @@
+<div class="min-h-[calc(100vh-128px)] bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="mb-8 animate-fade-in">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-600 rounded-xl flex items-center justify-center shadow-sm">
+          <i class="fas fa-history text-white"></i>
+        </div>
+        Lịch sử làm bài
+      </h1>
+      <p class="text-gray-500 mt-1 text-sm">Xem lại kết quả các bài quiz bạn đã hoàn thành.</p>
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2 animate-fade-in">
+        <i class="fas fa-exclamation-circle"></i>
+        <span class="text-sm">{{ errorMessage }}</span>
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="flex justify-center py-20">
+        <div class="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+      </div>
+    }
+
+    @if (!isLoading && !errorMessage) {
+      <!-- Stats Cards -->
+      @if (totalAttempts > 0) {
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 animate-fade-in">
+          <!-- Total Attempts -->
+          <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-pen-nib text-blue-600"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ totalAttempts }}</p>
+                <p class="text-xs text-gray-500">Lần thi</p>
+              </div>
+            </div>
+          </div>
+          <!-- Completed -->
+          <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-check-circle text-green-600"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ completedCount }}</p>
+                <p class="text-xs text-gray-500">Hoàn thành</p>
+              </div>
+            </div>
+          </div>
+          <!-- Average Score -->
+          <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-chart-line text-amber-600"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ averageScore }}%</p>
+                <p class="text-xs text-gray-500">Trung bình</p>
+              </div>
+            </div>
+          </div>
+          <!-- Best Score -->
+          <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-trophy text-purple-600"></i>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-gray-900">{{ bestScore }}%</p>
+                <p class="text-xs text-gray-500">Điểm cao nhất</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (totalAttempts === 0) {
+        <div class="text-center py-20 animate-fade-in">
+          <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-clipboard-list text-3xl text-gray-300"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-1">Chưa có lịch sử</h3>
+          <p class="text-sm text-gray-500 mb-6">Bạn chưa hoàn thành bài quiz nào. Hãy bắt đầu ngay!</p>
+          <a routerLink="/quizzes" class="btn-primary text-sm inline-flex items-center gap-2">
+            <i class="fas fa-play"></i> Khám phá Quizzes
+          </a>
+        </div>
+      }
+
+      <!-- History List -->
+      @if (totalAttempts > 0) {
+        <div class="space-y-4 animate-fade-in">
+          @for (item of historyItems; track item.quizAttemptId; let i = $index) {
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-200 overflow-hidden">
+              <div class="flex flex-col sm:flex-row">
+
+                <!-- Score Badge (left side) -->
+                <div class="sm:w-28 flex-shrink-0 flex items-center justify-center p-4 sm:p-5 border-b sm:border-b-0 sm:border-r border-gray-100"
+                     [class]="getScoreBgColor(item.score)">
+                  @if (item.status === 'Completed') {
+                    <div class="text-center">
+                      <p class="text-2xl sm:text-3xl font-bold {{ getScoreColor(item.score) }}">
+                        {{ item.score }}
+                      </p>
+                      <p class="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Điểm</p>
+                    </div>
+                  } @else {
+                    <div class="text-center">
+                      <i class="fas fa-hourglass-half text-2xl text-amber-500 mb-1"></i>
+                      <p class="text-[10px] font-medium text-amber-600 uppercase tracking-wider">Đang làm</p>
+                    </div>
+                  }
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1 p-4 sm:p-5">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ item.quizTitle }}</h3>
+                      @if (item.quizDescription) {
+                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">{{ item.quizDescription }}</p>
+                      }
+                    </div>
+                    <!-- Status badge -->
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0"
+                          [class]="item.status === 'Completed'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'">
+                      {{ item.status === 'Completed' ? 'Hoàn thành' : 'Đang làm' }}
+                    </span>
+                  </div>
+
+                  <!-- Meta Info -->
+                  <div class="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-xs text-gray-500">
+                    <span class="flex items-center gap-1.5">
+                      <i class="fas fa-calendar-alt text-gray-400"></i>
+                      {{ formatDate(item.startTime) }}
+                    </span>
+                    @if (item.status === 'Completed' && item.submittedAt) {
+                      <span class="flex items-center gap-1.5">
+                        <i class="fas fa-stopwatch text-gray-400"></i>
+                        {{ getTimeDuration(item.startTime, item.submittedAt) }}
+                      </span>
+                    }
+                    <span class="flex items-center gap-1.5">
+                      <i class="fas fa-question-circle text-gray-400"></i>
+                      {{ item.correctAnswers }}/{{ item.totalQuestions }} câu đúng
+                    </span>
+                    @if (item.quizCode) {
+                      <span class="flex items-center gap-1.5">
+                        <i class="fas fa-key text-gray-400"></i>
+                        {{ item.quizCode }}
+                      </span>
+                    }
+                    <span class="flex items-center gap-1.5">
+                      <i class="fas fa-clock text-gray-400"></i>
+                      {{ item.duration }} phút
+                    </span>
+                  </div>
+
+                  <!-- Progress bar (for completed) -->
+                  @if (item.status === 'Completed' && item.score != null) {
+                    <div class="mt-3">
+                      <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500"
+                             [style.width.%]="item.score"
+                             [class]="item.score >= 80 ? 'bg-green-500' :
+                                      item.score >= 60 ? 'bg-amber-500' :
+                                      item.score >= 40 ? 'bg-orange-500' : 'bg-red-500'">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Xem chi tiết button -->
+                    <div class="mt-3 flex justify-end">
+                      <a [routerLink]="['/quiz/review', item.quizAttemptId]"
+                         class="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600
+                                hover:text-primary-700 hover:bg-primary-50 px-3 py-1.5 rounded-lg transition-all">
+                        <i class="fas fa-eye"></i> Xem chi tiết
+                        <i class="fas fa-chevron-right text-[10px]"></i>
+                      </a>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+  </div>
+</div>

@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Bài quiz trong hệ thống.
-    /// Một Quiz có thể chứa nhiều Question thông qua bảng trung gian QuizQuestion.
-    /// </summary>
+    // Bài quiz trong hệ thống.
+    // Một Quiz có thể chứa nhiều Question thông qua bảng trung gian QuizQuestion.
     public class Quiz
     {
         [Key]
@@ -18,9 +16,7 @@ namespace QuizApp.WebAPI.Models.Entities
         [MaxLength(1000)]
         public string? Description { get; set; }
 
-        /// <summary>
-        /// Thời gian làm bài (đơn vị: phút).
-        /// </summary>
+        // Thời gian làm bài (đơn vị: phút).
         [Required]
         public int Duration { get; set; }
 

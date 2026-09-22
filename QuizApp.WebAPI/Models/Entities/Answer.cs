@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Đáp án của một câu hỏi.
-    /// Mỗi Answer thuộc đúng một Question.
-    /// </summary>
+    // Đáp án của một câu hỏi.
+    // Mỗi Answer thuộc đúng một Question.
     public class Answer
     {
         [Key]
@@ -16,9 +14,7 @@ namespace QuizApp.WebAPI.Models.Entities
         [MaxLength(1000)]
         public string Content { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Đánh dấu đáp án đúng.
-        /// </summary>
+        // Đánh dấu đáp án đúng.
         public bool IsCorrect { get; set; } = false;
 
         public bool IsActive { get; set; } = true;

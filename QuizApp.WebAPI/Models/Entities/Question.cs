@@ -3,11 +3,9 @@ using QuizApp.WebAPI.Models.Enums;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Câu hỏi trong ngân hàng câu hỏi.
-    /// Một Question có thể thuộc nhiều Quiz (thông qua QuizQuestion)
-    /// và có nhiều Answer.
-    /// </summary>
+    // Câu hỏi trong ngân hàng câu hỏi.
+    // Một Question có thể thuộc nhiều Quiz (thông qua QuizQuestion)
+    // và có nhiều Answer.
     public class Question
     {
         [Key]

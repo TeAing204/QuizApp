@@ -49,11 +49,12 @@ namespace QuizApp.WebAPI.Services
             return vm;
         }
 
-        public async Task<bool> CreateAsync(QuizCreateDto dto)
+        public async Task<Guid> CreateAsync(QuizCreateDto dto)
         {
             var quiz = _mapper.Map<Quiz>(dto);
             _context.Quizzes.Add(quiz);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            return quiz.Id;
         }
 
         public async Task<bool> UpdateAsync(QuizEditDto dto)
@@ -179,6 +180,8 @@ namespace QuizApp.WebAPI.Services
             var attempt = await _context.QuizAttempts
                 .Include(a => a.Quiz)
                     .ThenInclude(q => q.QuizQuestions)
+                        .ThenInclude(qq => qq.Question)
+                            .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(a =>
                     a.UserId == dto.UserId &&
                     a.QuizId == dto.QuizId &&
@@ -197,14 +200,31 @@ namespace QuizApp.WebAPI.Services
                 });
             }
 
-            // Tính điểm: lấy tất cả question trong quiz, đếm số câu đúng
+            // Tính điểm theo TỪNG CÂU HỎI (không phải từng đáp án)
+            // Câu đúng = user chọn đúng TẤT CẢ đáp án đúng VÀ KHÔNG chọn đáp án sai
             int totalQuestions = attempt.Quiz.QuizQuestions.Count;
             int correctCount = 0;
 
-            foreach (var answer in dto.Answers)
+            // Group các đáp án user chọn theo QuestionId
+            var userAnswersByQuestion = dto.Answers
+                .GroupBy(a => a.QuestionId)
+                .ToDictionary(g => g.Key, g => g.Select(a => a.AnswerId).ToHashSet());
+
+            foreach (var qq in attempt.Quiz.QuizQuestions)
             {
-                var dbAnswer = await _context.Answers.FindAsync(answer.AnswerId);
-                if (dbAnswer != null && dbAnswer.IsCorrect)
+                var question = qq.Question;
+                // Tập đáp án đúng của câu hỏi
+                var correctAnswerIds = question.Answers
+                    .Where(a => a.IsCorrect && a.IsActive)
+                    .Select(a => a.Id)
+                    .ToHashSet();
+
+                // Tập đáp án user đã chọn cho câu này
+                userAnswersByQuestion.TryGetValue(question.Id, out var selectedIds);
+                selectedIds ??= new HashSet<Guid>();
+
+                // Câu đúng khi: user chọn đúng tất cả đáp án đúng VÀ không chọn đáp án sai
+                if (correctAnswerIds.SetEquals(selectedIds))
                     correctCount++;
             }
 
@@ -229,5 +249,122 @@ namespace QuizApp.WebAPI.Services
                 SubmittedAt = attempt.SubmittedAt.Value
             };
         }
+
+        public async Task<List<QuizHistoryDto>> GetHistoryByUserIdAsync(Guid userId)
+        {
+            var attempts = await _context.QuizAttempts
+                .Where(a => a.UserId == userId)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.QuizQuestions)
+                        .ThenInclude(qq => qq.Question)
+                            .ThenInclude(q => q.Answers)
+                .Include(a => a.UserAnswers)
+                .OrderByDescending(a => a.StartTime)
+                .ToListAsync();
+
+            return attempts.Select(a =>
+            {
+                // Tính đúng theo từng câu hỏi
+                var userAnswersByQuestion = a.UserAnswers
+                    .GroupBy(ua => ua.QuestionId)
+                    .ToDictionary(g => g.Key, g => g.Select(ua => ua.AnswerId).ToHashSet());
+
+                int totalQuestions = a.Quiz.QuizQuestions.Count;
+                int correctCount = 0;
+
+                foreach (var qq in a.Quiz.QuizQuestions)
+                {
+                    var correctAnswerIds = qq.Question.Answers
+                        .Where(ans => ans.IsCorrect && ans.IsActive)
+                        .Select(ans => ans.Id)
+                        .ToHashSet();
+
+                    userAnswersByQuestion.TryGetValue(qq.Question.Id, out var selectedIds);
+                    selectedIds ??= new HashSet<Guid>();
+
+                    if (correctAnswerIds.SetEquals(selectedIds))
+                        correctCount++;
+                }
+
+                return new QuizHistoryDto
+                {
+                    QuizAttemptId = a.Id,
+                    QuizId = a.QuizId,
+                    QuizTitle = a.Quiz.Title,
+                    QuizDescription = a.Quiz.Description,
+                    Duration = a.Quiz.Duration,
+                    ThumbnailUrl = a.Quiz.ThumbnailUrl,
+                    Score = a.Score,
+                    TotalQuestions = totalQuestions,
+                    CorrectAnswers = correctCount,
+                    StartTime = a.StartTime,
+                    SubmittedAt = a.SubmittedAt,
+                    QuizCode = a.QuizCode
+                };
+            }).ToList();
+        }
+
+        public async Task<AttemptDetailDto?> GetAttemptDetailAsync(Guid attemptId)
+        {
+            var attempt = await _context.QuizAttempts
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.QuizQuestions)
+                        .ThenInclude(qq => qq.Question)
+                            .ThenInclude(q => q.Answers)
+                .Include(a => a.UserAnswers)
+                .FirstOrDefaultAsync(a => a.Id == attemptId);
+
+            if (attempt == null) throw new NotFoundException("QuizAttempt", attemptId);
+
+            var userAnswersByQuestion = attempt.UserAnswers
+                .GroupBy(ua => ua.QuestionId)
+                .ToDictionary(g => g.Key, g => g.Select(ua => ua.AnswerId).ToHashSet());
+
+            var questions = new List<AttemptQuestionDetailDto>();
+            int correctCount = 0;
+
+            foreach (var qq in attempt.Quiz.QuizQuestions)
+            {
+                var question = qq.Question;
+                userAnswersByQuestion.TryGetValue(question.Id, out var selectedIds);
+                selectedIds ??= new HashSet<Guid>();
+
+                var correctAnswerIds = question.Answers
+                    .Where(a => a.IsCorrect && a.IsActive)
+                    .Select(a => a.Id)
+                    .ToHashSet();
+
+                bool isCorrect = correctAnswerIds.SetEquals(selectedIds);
+                if (isCorrect) correctCount++;
+
+                questions.Add(new AttemptQuestionDetailDto
+                {
+                    QuestionContent = question.Content,
+                    QuestionType = question.QuestionType.ToString(),
+                    IsCorrect = isCorrect,
+                    Answers = question.Answers
+                        .Where(a => a.IsActive)
+                        .Select(a => new AttemptAnswerDetailDto
+                        {
+                            Content = a.Content,
+                            IsCorrect = a.IsCorrect,
+                            IsSelected = selectedIds.Contains(a.Id)
+                        }).ToList()
+                });
+            }
+
+            return new AttemptDetailDto
+            {
+                QuizAttemptId = attempt.Id,
+                QuizTitle = attempt.Quiz.Title,
+                Score = attempt.Score ?? 0,
+                TotalQuestions = attempt.Quiz.QuizQuestions.Count,
+                CorrectAnswers = correctCount,
+                StartTime = attempt.StartTime,
+                SubmittedAt = attempt.SubmittedAt,
+                Questions = questions
+            };
+        }
     }
 }
+

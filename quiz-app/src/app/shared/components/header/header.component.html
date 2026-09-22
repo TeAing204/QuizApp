@@ -60,7 +60,18 @@
                     {{ authService.getCurrentUser()?.roles }}
                   </span>
                 </div>
+                <a routerLink="/profile" (click)="isDropdownOpen=false"
+                   class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                  <i class="fas fa-user-circle text-primary-500 w-4"></i> Hồ sơ cá nhân
+                </a>
+                <a routerLink="/quiz/history" (click)="isDropdownOpen=false"
+                   class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                  <i class="fas fa-history text-emerald-500 w-4"></i> Lịch sử làm bài
+                </a>
                 @if (authService.isAdmin()) {
+                  <div class="px-4 py-1.5">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Admin Panel</p>
+                  </div>
                   <a routerLink="/admin/create" (click)="isDropdownOpen=false"
                      class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
                     <i class="fas fa-plus-circle text-pink-500 w-4"></i> Tạo mới
@@ -72,6 +83,14 @@
                   <a routerLink="/admin/questions" (click)="isDropdownOpen=false"
                      class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
                     <i class="fas fa-question-circle text-accent-500 w-4"></i> Question Bank
+                  </a>
+                  <a routerLink="/admin/users" (click)="isDropdownOpen=false"
+                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <i class="fas fa-users text-blue-500 w-4"></i> Manage Users
+                  </a>
+                  <a routerLink="/admin/roles" (click)="isDropdownOpen=false"
+                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <i class="fas fa-user-shield text-purple-500 w-4"></i> Manage Roles
                   </a>
                 }
                 <button (click)="logout()"
@@ -108,6 +127,9 @@
         </a>
         <a routerLink="/quizzes" (click)="toggleMenu()" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-primary-50 hover:text-primary-600">
           <i class="fas fa-clipboard-list mr-2 w-5"></i> Quizzes
+        </a>
+        <a routerLink="/contact" (click)="toggleMenu()" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-primary-50 hover:text-primary-600">
+          <i class="fas fa-envelope mr-2 w-5"></i> Contact
         </a>
         <div class="pt-3 border-t border-gray-100 px-4">
           @if (authService.isLoggedIn()) {

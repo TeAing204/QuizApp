@@ -5,7 +5,7 @@
       <h1 class="section-title"><i class="fas fa-question-circle text-accent-500 mr-2"></i>Question Bank</h1>
       <p class="text-gray-500">Manage all questions and answers</p>
     </div>
-    <button (click)="openModal()" class="btn-primary"><i class="fas fa-plus mr-2"></i> Create Question</button>
+    <a routerLink="/admin/questions/create" class="btn-primary"><i class="fas fa-plus mr-2"></i> Create Question</a>
   </div>
 
   <!-- Search -->
@@ -23,17 +23,17 @@
     <div class="text-center py-20 card p-8">
       <i class="fas fa-inbox text-5xl text-gray-300 mb-4"></i>
       <p class="text-gray-500 text-lg">No questions found</p>
-      <button (click)="openModal()" class="btn-primary mt-4">Create your first question</button>
+      <a routerLink="/admin/questions/create" class="btn-primary mt-4">Create your first question</a>
     </div>
   } @else {
     <!-- Question Cards -->
     <div class="space-y-4">
-      @for (q of filteredQuestions; track q.id; let i = $index) {
+      @for (q of paginatedQuestions; track q.id; let i = $index) {
         <div class="card p-5 border border-gray-100">
           <div class="flex justify-between items-start gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs font-bold text-gray-400">#{{ i + 1 }}</span>
+                <span class="text-xs font-bold text-gray-400">#{{ (currentPage - 1) * pageSize + i + 1 }}</span>
                 <span class="px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">{{ q.questionType }}</span>
                 <span class="px-2 py-0.5 rounded text-xs font-medium"
                       [class]="q.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
@@ -69,15 +69,22 @@
                 </div>
               }
             </div>
-            <button (click)="deleteQuestion(q.id, q.content)"
-                    class="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors flex-shrink-0" title="Delete">
-              <i class="fas fa-trash-alt"></i>
-            </button>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <a [routerLink]="'/admin/questions/' + q.id + '/edit'"
+                 class="p-2 rounded-lg text-blue-500 hover:bg-blue-50 transition-colors" title="Edit">
+                <i class="fas fa-pen"></i>
+              </a>
+              <button (click)="deleteQuestion(q.id, q.content)"
+                      class="p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors" title="Delete">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
       }
     </div>
-    <p class="text-sm text-gray-400 mt-4">Showing {{ filteredQuestions.length }} of {{ questions.length }} questions</p>
+    <p class="text-sm text-gray-400 mt-4">Showing {{ paginatedQuestions.length }} of {{ filteredQuestions.length }} questions</p>
+    <app-pagination [totalItems]="filteredQuestions.length" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
   }
 
   <!-- CREATE MODAL (2-Step) -->

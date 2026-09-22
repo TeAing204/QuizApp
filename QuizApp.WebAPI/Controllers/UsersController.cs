@@ -51,5 +51,13 @@ namespace QuizApp.WebAPI.Controllers
             var result = await _userService.DeleteAsync(id);
             return Ok(result);
         }
+
+        [HttpPost("{id}/change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(Guid id, [FromBody] ChangePasswordDto dto)
+        {
+            var result = await _userService.ChangePasswordAsync(id, dto);
+            return Ok(result);
+        }
     }
 }

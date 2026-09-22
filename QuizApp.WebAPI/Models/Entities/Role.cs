@@ -2,10 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Vai trò người dùng trong hệ thống (VD: User, Administrator).
-    /// Một Role có thể được gán cho nhiều User.
-    /// </summary>
+    // Một Role có thể được gán cho nhiều User.
     public class Role
     {
         [Key]
@@ -20,7 +17,6 @@ namespace QuizApp.WebAPI.Models.Entities
 
         public bool IsActive { get; set; } = true;
 
-        // Navigation: Một Role → Nhiều User
         public ICollection<User> Users { get; set; } = new List<User>();
     }
 }

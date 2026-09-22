@@ -1,0 +1,192 @@
+<div class="min-h-[calc(100vh-128px)] bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="flex justify-center py-20">
+        <div class="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2 animate-fade-in">
+        <i class="fas fa-exclamation-circle"></i>
+        <span class="text-sm">{{ errorMessage }}</span>
+      </div>
+    }
+
+    @if (detail && !isLoading) {
+      <!-- Back Button -->
+      <a routerLink="/quiz/history"
+         class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 mb-6 transition-colors">
+        <i class="fas fa-arrow-left"></i> Quay lại lịch sử
+      </a>
+
+      <!-- Score Card Header -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8 animate-fade-in">
+        <div class="bg-gradient-to-r {{ gradeBg }} p-6 sm:p-8 text-white">
+          <div class="flex flex-col sm:flex-row items-center gap-6">
+            <!-- Score Circle -->
+            <div class="relative w-28 h-28 flex-shrink-0">
+              <svg class="w-28 h-28 -rotate-90" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="54" fill="none" stroke="white" stroke-width="10"
+                        stroke-linecap="round"
+                        stroke-dasharray="339.292"
+                        [attr.stroke-dashoffset]="circleOffset"
+                        style="transition: stroke-dashoffset 1.5s ease-out"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-2xl font-black">{{ scorePercent | number:'1.0-0' }}%</span>
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="text-center sm:text-left flex-1">
+              <h1 class="text-xl sm:text-2xl font-bold mb-1">{{ detail.quizTitle }}</h1>
+              <p class="text-white/80 text-sm mb-3">{{ gradeLabel }}</p>
+              <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-white/70 text-xs">
+                <span class="flex items-center gap-1.5">
+                  <i class="fas fa-check-circle"></i> {{ detail.correctAnswers }}/{{ detail.totalQuestions }} câu đúng
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <i class="fas fa-stopwatch"></i> {{ getTimeDuration() }}
+                </span>
+                @if (detail.submittedAt) {
+                  <span class="flex items-center gap-1.5">
+                    <i class="fas fa-calendar-check"></i> {{ formatDate(detail.submittedAt) }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-3 divide-x divide-gray-100">
+          <div class="text-center py-4">
+            <p class="text-xl font-bold text-green-600">{{ detail.correctAnswers }}</p>
+            <p class="text-xs text-gray-500">Câu đúng</p>
+          </div>
+          <div class="text-center py-4">
+            <p class="text-xl font-bold text-red-500">{{ detail.totalQuestions - detail.correctAnswers }}</p>
+            <p class="text-xs text-gray-500">Câu sai</p>
+          </div>
+          <div class="text-center py-4">
+            <p class="text-xl font-bold text-gray-700">{{ detail.totalQuestions }}</p>
+            <p class="text-xs text-gray-500">Tổng câu</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions List -->
+      <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i class="fas fa-list-ol text-primary-500"></i> Chi tiết từng câu hỏi
+      </h2>
+
+      <div class="space-y-4">
+        @for (question of detail.questions; track $index; let i = $index) {
+          <div class="bg-white rounded-xl border shadow-sm overflow-hidden animate-fade-in"
+               [class]="question.isCorrect ? 'border-green-200' : 'border-red-200'">
+
+            <!-- Question Header -->
+            <div class="flex items-start gap-3 p-4 sm:p-5"
+                 [class]="question.isCorrect ? 'bg-green-50' : 'bg-red-50'">
+              <!-- Number Badge -->
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold"
+                   [class]="question.isCorrect
+                     ? 'bg-green-100 text-green-700'
+                     : 'bg-red-100 text-red-700'">
+                {{ i + 1 }}
+              </div>
+
+              <!-- Question Text -->
+              <div class="flex-1 min-w-0">
+                <p class="text-sm sm:text-base text-gray-900 font-medium">{{ question.questionContent }}</p>
+                <div class="flex items-center gap-2 mt-1.5">
+                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                        [class]="question.isCorrect
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'">
+                    {{ question.isCorrect ? '✓ Đúng' : '✗ Sai' }}
+                  </span>
+                  <span class="text-[10px] text-gray-400 uppercase tracking-wider">
+                    {{ question.questionType === 'MultipleChoice' ? 'Nhiều đáp án' : 'Một đáp án' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Status Icon -->
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                   [class]="question.isCorrect
+                     ? 'bg-green-200 text-green-700'
+                     : 'bg-red-200 text-red-700'">
+                <i [class]="question.isCorrect ? 'fas fa-check' : 'fas fa-times'" class="text-sm"></i>
+              </div>
+            </div>
+
+            <!-- Answers -->
+            <div class="p-4 sm:p-5 space-y-2">
+              @for (answer of question.answers; track $index) {
+                <div class="flex items-start gap-3 px-4 py-3 rounded-xl text-sm transition-all border"
+                     [class]="getAnswerClasses(answer)">
+
+                  <!-- Indicator -->
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs border-2"
+                       [class]="getIndicatorClasses(answer)">
+                    @if (answer.isSelected && answer.isCorrect) {
+                      <i class="fas fa-check text-[10px]"></i>
+                    } @else if (answer.isSelected && !answer.isCorrect) {
+                      <i class="fas fa-times text-[10px]"></i>
+                    } @else if (!answer.isSelected && answer.isCorrect) {
+                      <i class="fas fa-check text-[10px]"></i>
+                    }
+                  </div>
+
+                  <!-- Answer Text -->
+                  <span class="flex-1" [class]="answer.isSelected ? 'font-medium' : ''">
+                    {{ answer.content }}
+                  </span>
+
+                  <!-- Labels -->
+                  <div class="flex-shrink-0 flex items-center gap-1.5">
+                    @if (answer.isSelected) {
+                      <span class="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                            [class]="answer.isCorrect
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'">
+                        {{ answer.isCorrect ? 'Đã chọn ✓' : 'Đã chọn ✗' }}
+                      </span>
+                    }
+                    @if (answer.isCorrect && !answer.isSelected) {
+                      <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-100 text-emerald-700">
+                        Đáp án đúng
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Bottom Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 mt-8 mb-4">
+        <a routerLink="/quiz/history"
+           class="flex-1 px-6 py-3.5 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold
+                  text-sm text-center hover:border-gray-300 hover:bg-gray-50 transition-all">
+          <i class="fas fa-history mr-2"></i> Lịch sử làm bài
+        </a>
+        <a routerLink="/quizzes"
+           class="flex-[2] px-6 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white
+                  rounded-2xl font-bold text-sm text-center hover:shadow-lg transition-all
+                  flex items-center justify-center gap-2">
+          <i class="fas fa-play"></i> Làm bài quiz khác
+        </a>
+      </div>
+    }
+
+  </div>
+</div>

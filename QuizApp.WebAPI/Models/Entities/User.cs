@@ -3,10 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizApp.WebAPI.Models.Entities
 {
-    /// <summary>
-    /// Tài khoản người dùng trong hệ thống.
-    /// Mỗi User thuộc đúng một Role (User hoặc Administrator).
-    /// </summary>
+    // Mỗi User thuộc đúng một Role.
     public class User
     {
         [Key]

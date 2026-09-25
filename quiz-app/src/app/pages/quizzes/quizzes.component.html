@@ -3,10 +3,10 @@
   <!-- Hero Section -->
   <div class="text-center mb-10">
     <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent mb-3">
-      Khám Phá Bài Quiz
+      Explore Quizzes
     </h1>
     <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-      Chọn một bài quiz để thử sức hoặc nhập mã đề thi để tham gia ngay.
+      Choose a quiz to challenge yourself or enter a quiz code to join instantly.
     </p>
   </div>
 
@@ -19,7 +19,7 @@
       <input type="text"
              [(ngModel)]="searchTerm"
              (ngModelChange)="onSearch()"
-             placeholder="Tìm kiếm bài quiz..."
+             placeholder="Search quizzes..."
              class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
                     focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
                     shadow-sm hover:shadow transition-shadow" />
@@ -32,7 +32,7 @@
         <input type="text"
                [(ngModel)]="quizCode"
                name="quizCode"
-               placeholder="Nhập mã đề thi..."
+               placeholder="Enter quiz code..."
                class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
                       focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent
                       shadow-sm hover:shadow transition-shadow" />
@@ -40,7 +40,7 @@
       <button type="submit"
               class="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-xl font-medium
                      hover:shadow-lg hover:shadow-accent-500/25 transition-all duration-200 text-sm whitespace-nowrap">
-        <i class="fas fa-play mr-1.5"></i> Tham gia
+        <i class="fas fa-play mr-1.5"></i> Join
       </button>
     </form>
   </div>
@@ -68,12 +68,12 @@
       <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <i class="fas fa-clipboard-list text-3xl text-gray-400"></i>
       </div>
-      <h3 class="text-lg font-semibold text-gray-600 mb-1">Không tìm thấy bài quiz</h3>
+      <h3 class="text-lg font-semibold text-gray-600 mb-1">No quizzes found</h3>
       <p class="text-gray-400 text-sm">
         @if (searchTerm) {
-          Thử tìm kiếm với từ khóa khác.
+          Try searching with different keywords.
         } @else {
-          Chưa có bài quiz nào được xuất bản.
+          No quizzes have been published yet.
         }
       </p>
     </div>
@@ -107,10 +107,10 @@
             <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ quiz.description }}</p>
             <div class="flex items-center justify-between">
               <span class="text-xs text-gray-400">
-                <i class="fas fa-question-circle mr-1"></i> {{ quiz.numberOfQuestions }} câu hỏi
+                <i class="fas fa-question-circle mr-1"></i> {{ quiz.numberOfQuestions }} questions
               </span>
               <span class="text-xs font-medium text-primary-600 group-hover:text-primary-700">
-                Bắt đầu <i class="fas fa-arrow-right ml-1"></i>
+                Start <i class="fas fa-arrow-right ml-1"></i>
               </span>
             </div>
           </div>

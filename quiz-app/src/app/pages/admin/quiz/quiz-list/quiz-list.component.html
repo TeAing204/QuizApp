@@ -14,7 +14,7 @@
   <div class="mb-6">
     <div class="relative max-w-md">
       <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-search"></i></span>
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+      <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="onSearch()"
              placeholder="Search quizzes..."
              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white" />
     </div>
@@ -26,7 +26,7 @@
       <i class="fas fa-spinner fa-spin text-3xl text-primary-500"></i>
       <p class="text-gray-500 mt-3">Loading quizzes...</p>
     </div>
-  } @else if (filteredQuizzes.length === 0) {
+  } @else if (quizzes.length === 0) {
     <div class="text-center py-20 card p-8">
       <i class="fas fa-inbox text-5xl text-gray-300 mb-4"></i>
       <p class="text-gray-500 text-lg">No quizzes found</p>
@@ -39,15 +39,21 @@
         <table class="w-full">
           <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Quiz</th>
-              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration</th>
+              <th (click)="onSort('title')" class="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-primary-600">
+                Quiz <i class="fas" [class.fa-sort-up]="sortBy==='title' && sortOrder==='asc'" [class.fa-sort-down]="sortBy==='title' && sortOrder==='desc'" [class.fa-sort]="sortBy!=='title'"></i>
+              </th>
+              <th (click)="onSort('duration')" class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-primary-600">
+                Duration <i class="fas" [class.fa-sort-up]="sortBy==='duration' && sortOrder==='asc'" [class.fa-sort-down]="sortBy==='duration' && sortOrder==='desc'" [class.fa-sort]="sortBy!=='duration'"></i>
+              </th>
               <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Questions</th>
-              <th class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th (click)="onSort('isactive')" class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-primary-600">
+                Status <i class="fas" [class.fa-sort-up]="sortBy==='isactive' && sortOrder==='asc'" [class.fa-sort-down]="sortBy==='isactive' && sortOrder==='desc'" [class.fa-sort]="sortBy!=='isactive'"></i>
+              </th>
               <th class="text-center px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            @for (quiz of filteredQuizzes; track quiz.id) {
+            @for (quiz of quizzes; track quiz.id) {
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
@@ -96,6 +102,7 @@
         </table>
       </div>
     </div>
-    <p class="text-sm text-gray-400 mt-3">Showing {{ filteredQuizzes.length }} of {{ quizzes.length }} quizzes</p>
+    <app-pagination [totalItems]="totalElements" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
+    <p class="text-sm text-gray-400 mt-3">Showing {{ quizzes.length }} of {{ totalElements }} quizzes</p>
   }
 </div>

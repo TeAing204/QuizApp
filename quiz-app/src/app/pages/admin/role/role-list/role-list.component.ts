@@ -14,11 +14,17 @@ import { RoleViewModel } from '../../../../models/role.model';
 })
 export class AdminRoleListComponent implements OnInit {
   roles: RoleViewModel[] = [];
-  filteredRoles: RoleViewModel[] = [];
   searchTerm = '';
   isLoading = true;
+
+  // Pagination (server-side)
   currentPage = 1;
   pageSize = 10;
+  totalElements = 0;
+
+  // Sorting
+  sortBy = 'name';
+  sortOrder = 'asc';
 
   constructor(private roleService: RoleService) {}
 
@@ -28,10 +34,15 @@ export class AdminRoleListComponent implements OnInit {
 
   loadRoles(): void {
     this.isLoading = true;
-    this.roleService.getAll().subscribe({
-      next: (data) => {
-        this.roles = data;
-        this.filteredRoles = data;
+    this.roleService.getAll({
+      search: this.searchTerm || undefined,
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+      sortOrder: this.sortOrder
+    }).subscribe({
+      next: (res) => {
+        this.roles = res.content;
+        this.totalElements = res.totalElements;
         this.isLoading = false;
       },
       error: () => this.isLoading = false
@@ -39,21 +50,13 @@ export class AdminRoleListComponent implements OnInit {
   }
 
   onSearch(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredRoles = this.roles.filter(r =>
-      r.name.toLowerCase().includes(term) ||
-      r.description?.toLowerCase().includes(term)
-    );
     this.currentPage = 1;
-  }
-
-  get paginatedRoles(): RoleViewModel[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRoles.slice(start, start + this.pageSize);
+    this.loadRoles();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadRoles();
   }
 
   deleteRole(id: string, name: string): void {

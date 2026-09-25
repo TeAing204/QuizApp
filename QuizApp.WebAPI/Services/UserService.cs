@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuizApp.WebAPI.Data;
+using QuizApp.WebAPI.Models.DTOs.Common;
 using QuizApp.WebAPI.Models.DTOs.User;
 using QuizApp.WebAPI.Models.Entities;
 using QuizApp.WebAPI.Security;
@@ -21,10 +22,40 @@ namespace QuizApp.WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<UserViewModel>> GetAllAsync()
+        public async Task<PaginatedResponse<UserViewModel>> GetAllAsync(PaginationParams p)
         {
-            var users = await _context.Users.Include(u => u.Role).OrderBy(u => u.UserName).ToListAsync();
-            return _mapper.Map<List<UserViewModel>>(users);
+            var query = _context.Users.Include(u => u.Role).AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(p.Search))
+            {
+                var search = p.Search.ToLower();
+                query = query.Where(u =>
+                    u.UserName.ToLower().Contains(search) ||
+                    u.Email.ToLower().Contains(search) ||
+                    u.FirstName.ToLower().Contains(search) ||
+                    u.LastName.ToLower().Contains(search) ||
+                    (u.DisplayName != null && u.DisplayName.ToLower().Contains(search)));
+            }
+
+            // Sort
+            query = p.SortBy?.ToLower() switch
+            {
+                "username" => p.SortOrder == "asc" ? query.OrderBy(u => u.UserName) : query.OrderByDescending(u => u.UserName),
+                "email" => p.SortOrder == "asc" ? query.OrderBy(u => u.Email) : query.OrderByDescending(u => u.Email),
+                "displayname" => p.SortOrder == "asc" ? query.OrderBy(u => u.DisplayName) : query.OrderByDescending(u => u.DisplayName),
+                _ => p.SortOrder == "asc" ? query.OrderBy(u => u.CreatedAt) : query.OrderByDescending(u => u.CreatedAt)
+            };
+
+            var totalElements = await query.CountAsync();
+
+            var users = await query
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
+                .ToListAsync();
+
+            var content = _mapper.Map<List<UserViewModel>>(users);
+            return new PaginatedResponse<UserViewModel>(content, p.PageNumber, p.PageSize, totalElements);
         }
 
         public async Task<UserViewModel?> GetByIdAsync(Guid id)

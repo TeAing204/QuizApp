@@ -6,7 +6,7 @@ namespace QuizApp.WebAPI.Services.Interfaces
 {
     public interface IQuizService
     {
-        Task<List<QuizViewModel>> GetAllAsync();
+        Task<PaginatedResponse<QuizViewModel>> GetAllAsync(PaginationParams p);
         Task<QuizViewModel?> GetByIdAsync(Guid id);
         Task<Guid> CreateAsync(QuizCreateDto dto);
         Task<bool> UpdateAsync(QuizEditDto dto);

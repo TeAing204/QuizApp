@@ -14,11 +14,17 @@ import { UserViewModel } from '../../../../models/user.model';
 })
 export class AdminUserListComponent implements OnInit {
   users: UserViewModel[] = [];
-  filteredUsers: UserViewModel[] = [];
   searchTerm = '';
   isLoading = true;
+
+  // Pagination (server-side)
   currentPage = 1;
   pageSize = 10;
+  totalElements = 0;
+
+  // Sorting
+  sortBy = 'createdAt';
+  sortOrder = 'desc';
 
   constructor(private userService: UserService) {}
 
@@ -28,10 +34,16 @@ export class AdminUserListComponent implements OnInit {
 
   loadUsers(): void {
     this.isLoading = true;
-    this.userService.getAll().subscribe({
-      next: (data) => {
-        this.users = data;
-        this.filteredUsers = data;
+    this.userService.getAll({
+      search: this.searchTerm || undefined,
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
+    }).subscribe({
+      next: (res) => {
+        this.users = res.content;
+        this.totalElements = res.totalElements;
         this.isLoading = false;
       },
       error: () => this.isLoading = false
@@ -39,22 +51,24 @@ export class AdminUserListComponent implements OnInit {
   }
 
   onSearch(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredUsers = this.users.filter(u =>
-      u.displayName?.toLowerCase().includes(term) ||
-      u.email.toLowerCase().includes(term) ||
-      u.userName.toLowerCase().includes(term)
-    );
     this.currentPage = 1;
-  }
-
-  get paginatedUsers(): UserViewModel[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredUsers.slice(start, start + this.pageSize);
+    this.loadUsers();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadUsers();
+  }
+
+  onSort(field: string): void {
+    if (this.sortBy === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortOrder = 'asc';
+    }
+    this.currentPage = 1;
+    this.loadUsers();
   }
 
   deleteUser(id: string, name: string): void {

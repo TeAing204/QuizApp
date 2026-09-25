@@ -127,8 +127,7 @@ export class AdminQuizFormComponent implements OnInit {
       this.quizService.update(this.quizId, dto).subscribe({
         next: () => {
           this.isSaving = false;
-          this.successMessage = 'Đã lưu quiz thành công!';
-          setTimeout(() => this.successMessage = '', 3000);
+          this.router.navigate(['/admin/quizzes']);
         },
         error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Lưu thất bại.'; }
       });
@@ -301,9 +300,9 @@ export class AdminQuizFormComponent implements OnInit {
           processQuestion(questionId);
         } else {
           // Fallback: lấy danh sách và tìm câu hỏi cuối cùng (mới nhất)
-          this.questionService.getAll().subscribe({
-            next: (all) => {
-              const createdQ = all.length > 0 ? all[all.length - 1] : null;
+          this.questionService.getAll({ pageSize: 100, sortBy: 'createdAt', sortOrder: 'desc' }).subscribe({
+            next: (res) => {
+              const createdQ = res.content.length > 0 ? res.content[0] : null;
               if (createdQ) {
                 processQuestion(createdQ.id);
               } else {
@@ -345,14 +344,9 @@ export class AdminQuizFormComponent implements OnInit {
 
   searchBank(): void {
     this.isSearchingBank = true;
-    this.questionService.getAll().subscribe({
-      next: (data) => {
-        if (this.bankSearchTerm.trim()) {
-          const term = this.bankSearchTerm.toLowerCase();
-          this.bankQuestions = data.filter(q => q.content.toLowerCase().includes(term));
-        } else {
-          this.bankQuestions = data;
-        }
+    this.questionService.getAll({ search: this.bankSearchTerm || undefined, pageSize: 100 }).subscribe({
+      next: (res) => {
+        this.bankQuestions = res.content;
         this.isSearchingBank = false;
       },
       error: () => this.isSearchingBank = false

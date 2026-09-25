@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
@@ -10,6 +10,7 @@ import {
   QuizHistoryDto, AttemptDetailDto
 } from '../models/quiz.model';
 import { QuestionViewModel, QuizQuestionCreateDto } from '../models/question.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class QuizService {
@@ -19,8 +20,14 @@ export class QuizService {
 
   // ===== PUBLIC =====
 
-  getAll(): Observable<QuizViewModel[]> {
-    return this.http.get<QuizViewModel[]>(this.apiUrl);
+  getAll(params?: {search?: string, pageNumber?: number, pageSize?: number, sortBy?: string, sortOrder?: string}): Observable<PaginatedResponse<QuizViewModel>> {
+    let httpParams = new HttpParams();
+    if (params?.search) httpParams = httpParams.set('search', params.search);
+    if (params?.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
+    if (params?.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    if (params?.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+    if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    return this.http.get<PaginatedResponse<QuizViewModel>>(this.apiUrl, { params: httpParams });
   }
 
   getById(id: string): Observable<QuizViewModel> {
@@ -81,4 +88,3 @@ export class QuizService {
     return this.http.get<AttemptDetailDto>(`${this.apiUrl}/attempts/${attemptId}`);
   }
 }
-

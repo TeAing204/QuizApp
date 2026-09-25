@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { RoleViewModel, RoleCreateDto, RoleEditDto } from '../models/role.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {
@@ -10,8 +11,13 @@ export class RoleService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<RoleViewModel[]> {
-    return this.http.get<RoleViewModel[]>(this.apiUrl);
+  getAll(params?: {search?: string, pageNumber?: number, pageSize?: number, sortBy?: string, sortOrder?: string}): Observable<PaginatedResponse<RoleViewModel>> {
+    let httpParams = new HttpParams();
+    if (params?.search) httpParams = httpParams.set('search', params.search);
+    if (params?.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
+    if (params?.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    return this.http.get<PaginatedResponse<RoleViewModel>>(this.apiUrl, { params: httpParams });
   }
 
   getById(id: string): Observable<RoleViewModel> {

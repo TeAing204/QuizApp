@@ -19,13 +19,17 @@ interface AnswerInput {
 })
 export class AdminQuestionListComponent implements OnInit {
   questions: QuestionViewModel[] = [];
-  filteredQuestions: QuestionViewModel[] = [];
   searchTerm = '';
   isLoading = true;
 
-  // Pagination
+  // Pagination (server-side)
   currentPage = 1;
   pageSize = 10;
+  totalElements = 0;
+
+  // Sorting
+  sortBy = 'createdAt';
+  sortOrder = 'desc';
 
   // Answers display per question (lazy loaded)
   questionAnswers: Map<string, AnswerViewModel[]> = new Map();
@@ -52,25 +56,41 @@ export class AdminQuestionListComponent implements OnInit {
 
   loadQuestions(): void {
     this.isLoading = true;
-    this.questionService.getAll().subscribe({
-      next: (data) => { this.questions = data; this.filteredQuestions = data; this.isLoading = false; },
+    this.questionService.getAll({
+      search: this.searchTerm || undefined,
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
+    }).subscribe({
+      next: (res) => {
+        this.questions = res.content;
+        this.totalElements = res.totalElements;
+        this.isLoading = false;
+      },
       error: () => this.isLoading = false
     });
   }
 
   onSearch(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredQuestions = this.questions.filter(q => q.content.toLowerCase().includes(term));
-    this.currentPage = 1; // Reset to first page on search
-  }
-
-  get paginatedQuestions(): QuestionViewModel[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredQuestions.slice(start, start + this.pageSize);
+    this.currentPage = 1;
+    this.loadQuestions();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadQuestions();
+  }
+
+  onSort(field: string): void {
+    if (this.sortBy === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortOrder = 'asc';
+    }
+    this.currentPage = 1;
+    this.loadQuestions();
   }
 
   deleteQuestion(id: string, content: string): void {
@@ -124,16 +144,13 @@ export class AdminQuestionListComponent implements OnInit {
     this.isSubmitting = true;
     this.modalError = '';
     this.questionService.create(this.newQuestion).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitting = false;
-        // Reload to get ID of newly created question
-        this.questionService.getAll().subscribe({
-          next: (all) => {
-            // Newest question is first (ordered by CreatedAt DESC)
-            this.createdQuestionId = all[0]?.id || '';
-            this.modalStep = 'answers';
-          }
-        });
+        // Backend trả về object có id
+        if (res && typeof res === 'object' && res.id) {
+          this.createdQuestionId = res.id;
+        }
+        this.modalStep = 'answers';
       },
       error: (err) => { this.isSubmitting = false; this.modalError = err.error?.message || 'Tạo câu hỏi thất bại.'; }
     });

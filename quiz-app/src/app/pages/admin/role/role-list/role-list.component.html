@@ -14,7 +14,7 @@
   <div class="mb-6">
     <div class="relative max-w-md">
       <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+      <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="onSearch()"
              placeholder="Tìm kiếm theo tên, mô tả..."
              class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm
                     focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm" />
@@ -29,7 +29,7 @@
   }
 
   <!-- Empty -->
-  @if (!isLoading && filteredRoles.length === 0) {
+  @if (!isLoading && roles.length === 0) {
     <div class="text-center py-16 text-gray-400">
       <i class="fas fa-user-shield text-4xl mb-3"></i>
       <p class="text-lg font-medium">Chưa có vai trò nào.</p>
@@ -37,9 +37,9 @@
   }
 
   <!-- Role Cards Grid -->
-  @if (!isLoading && filteredRoles.length > 0) {
+  @if (!isLoading && roles.length > 0) {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (role of paginatedRoles; track role.id) {
+      @for (role of roles; track role.id) {
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200 group">
           <!-- Role Icon + Name -->
           <div class="flex items-start gap-3 mb-3">
@@ -78,8 +78,8 @@
     </div>
 
     <div class="mt-4 text-xs text-gray-500">
-      Showing {{ paginatedRoles.length }} of {{ filteredRoles.length }} vai trò
+      Showing {{ roles.length }} of {{ totalElements }} vai trò
     </div>
-    <app-pagination [totalItems]="filteredRoles.length" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
+    <app-pagination [totalItems]="totalElements" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
   }
 </div>

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { UserViewModel, UserCreateDto, UserEditDto } from '../models/user.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -10,8 +11,14 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<UserViewModel[]> {
-    return this.http.get<UserViewModel[]>(this.apiUrl);
+  getAll(params?: {search?: string, pageNumber?: number, pageSize?: number, sortBy?: string, sortOrder?: string}): Observable<PaginatedResponse<UserViewModel>> {
+    let httpParams = new HttpParams();
+    if (params?.search) httpParams = httpParams.set('search', params.search);
+    if (params?.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
+    if (params?.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    if (params?.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+    if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    return this.http.get<PaginatedResponse<UserViewModel>>(this.apiUrl, { params: httpParams });
   }
 
   getById(id: string): Observable<UserViewModel> {

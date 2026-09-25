@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuizApp.WebAPI.Data;
+using QuizApp.WebAPI.Models.DTOs.Common;
 using QuizApp.WebAPI.Models.DTOs.Question;
 using QuizApp.WebAPI.Models.Entities;
 using QuizApp.WebAPI.Models.Enums;
@@ -20,13 +21,34 @@ namespace QuizApp.WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<QuestionViewModel>> GetAllAsync()
+        public async Task<PaginatedResponse<QuestionViewModel>> GetAllAsync(PaginationParams p)
         {
-            var questions = await _context.Questions
-                .Include(q => q.Answers)
-                .OrderByDescending(q => q.CreatedAt)
+            var query = _context.Questions.AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(p.Search))
+            {
+                var search = p.Search.ToLower();
+                query = query.Where(q => q.Content.ToLower().Contains(search));
+            }
+
+            // Sort
+            query = p.SortBy?.ToLower() switch
+            {
+                "content" => p.SortOrder == "asc" ? query.OrderBy(q => q.Content) : query.OrderByDescending(q => q.Content),
+                "questiontype" => p.SortOrder == "asc" ? query.OrderBy(q => q.QuestionType) : query.OrderByDescending(q => q.QuestionType),
+                _ => p.SortOrder == "asc" ? query.OrderBy(q => q.CreatedAt) : query.OrderByDescending(q => q.CreatedAt)
+            };
+
+            var totalElements = await query.CountAsync();
+
+            var questions = await query
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
                 .ToListAsync();
-            return _mapper.Map<List<QuestionViewModel>>(questions);
+
+            var content = _mapper.Map<List<QuestionViewModel>>(questions);
+            return new PaginatedResponse<QuestionViewModel>(content, p.PageNumber, p.PageSize, totalElements);
         }
 
         public async Task<QuestionViewModel?> GetByIdAsync(Guid id)

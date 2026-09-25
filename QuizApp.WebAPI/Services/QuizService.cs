@@ -22,19 +22,47 @@ namespace QuizApp.WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<QuizViewModel>> GetAllAsync()
+        public async Task<PaginatedResponse<QuizViewModel>> GetAllAsync(PaginationParams p)
         {
-            var quizzes = await _context.Quizzes
+            var query = _context.Quizzes
                 .Include(q => q.QuizQuestions)
-                .OrderByDescending(q => q.CreatedAt)
+                .AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(p.Search))
+            {
+                var search = p.Search.ToLower();
+                query = query.Where(q =>
+                    q.Title.ToLower().Contains(search) ||
+                    (q.Description != null && q.Description.ToLower().Contains(search)));
+            }
+
+            // Sort
+            query = p.SortBy?.ToLower() switch
+            {
+                "title" => p.SortOrder == "asc" ? query.OrderBy(q => q.Title) : query.OrderByDescending(q => q.Title),
+                "duration" => p.SortOrder == "asc" ? query.OrderBy(q => q.Duration) : query.OrderByDescending(q => q.Duration),
+                "isactive" => p.SortOrder == "asc" ? query.OrderBy(q => q.IsActive) : query.OrderByDescending(q => q.IsActive),
+                _ => p.SortOrder == "asc" ? query.OrderBy(q => q.CreatedAt) : query.OrderByDescending(q => q.CreatedAt)
+            };
+
+            // Count
+            var totalElements = await query.CountAsync();
+
+            // Pagination
+            var quizzes = await query
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
                 .ToListAsync();
 
-            return quizzes.Select(q =>
+            var content = quizzes.Select(q =>
             {
                 var vm = _mapper.Map<QuizViewModel>(q);
                 vm.NumberOfQuestions = q.QuizQuestions.Count;
                 return vm;
             }).ToList();
+
+            return new PaginatedResponse<QuizViewModel>(content, p.PageNumber, p.PageSize, totalElements);
         }
 
         public async Task<QuizViewModel?> GetByIdAsync(Guid id)

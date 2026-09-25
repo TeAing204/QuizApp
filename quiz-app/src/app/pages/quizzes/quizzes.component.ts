@@ -29,9 +29,9 @@ export class QuizzesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.quizService.getAll().subscribe({
-      next: (data) => {
-        this.quizzes = data.filter(q => q.isActive);
+    this.quizService.getAll({ pageSize: 100 }).subscribe({
+      next: (res) => {
+        this.quizzes = res.content.filter(q => q.isActive);
         this.filteredQuizzes = this.quizzes;
         this.isLoading = false;
       },

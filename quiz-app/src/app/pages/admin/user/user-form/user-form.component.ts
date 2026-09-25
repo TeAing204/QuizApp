@@ -53,8 +53,8 @@ export class AdminUserFormComponent implements OnInit {
   }
 
   loadRoles(): void {
-    this.roleService.getAll().subscribe({
-      next: (data) => this.roles = data.filter(r => r.isActive),
+    this.roleService.getAll({ pageSize: 100 }).subscribe({
+      next: (res) => this.roles = res.content.filter(r => r.isActive),
       error: () => {} // Roles might not be available
     });
   }

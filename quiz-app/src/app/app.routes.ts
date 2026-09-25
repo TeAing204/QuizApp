@@ -12,7 +12,6 @@ import { AdminQuizFormComponent } from './pages/admin/quiz/quiz-form/quiz-form.c
 import { AdminQuestionListComponent } from './pages/admin/question/question-list/question-list.component';
 import { AdminQuestionFormComponent } from './pages/admin/question/question-form/question-form.component';
 import { AdminQuizQuestionsComponent } from './pages/admin/quiz/quiz-questions/quiz-questions.component';
-import { CreateHubComponent } from './pages/admin/create-hub/create-hub.component';
 import { AdminUserListComponent } from './pages/admin/user/user-list/user-list.component';
 import { AdminUserFormComponent } from './pages/admin/user/user-form/user-form.component';
 import { AdminRoleListComponent } from './pages/admin/role/role-list/role-list.component';
@@ -43,8 +42,7 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [adminGuard],
     children: [
-      { path: '', redirectTo: 'create', pathMatch: 'full' },
-      { path: 'create', component: CreateHubComponent, title: 'Admin - Tạo mới' },
+      { path: '', redirectTo: 'quizzes', pathMatch: 'full' },
       { path: 'quizzes', component: AdminQuizListComponent, title: 'Admin - Quizzes' },
       { path: 'quizzes/create', component: AdminQuizFormComponent, title: 'Admin - Create Quiz' },
       { path: 'quizzes/:id/edit', component: AdminQuizFormComponent, title: 'Admin - Edit Quiz' },

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuizApp.WebAPI.Data;
+using QuizApp.WebAPI.Models.DTOs.Common;
 using QuizApp.WebAPI.Models.DTOs.Role;
 using QuizApp.WebAPI.Services.Interfaces;
 using QuizApp.WebAPI.Exceptions;
@@ -18,10 +19,35 @@ namespace QuizApp.WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<RoleViewModel>> GetAllAsync()
+        public async Task<PaginatedResponse<RoleViewModel>> GetAllAsync(PaginationParams p)
         {
-            var roles = await _context.Roles.OrderBy(r => r.Name).ToListAsync();
-            return _mapper.Map<List<RoleViewModel>>(roles);
+            var query = _context.Roles.AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(p.Search))
+            {
+                var search = p.Search.ToLower();
+                query = query.Where(r =>
+                    r.Name.ToLower().Contains(search) ||
+                    (r.Description != null && r.Description.ToLower().Contains(search)));
+            }
+
+            // Sort
+            query = p.SortBy?.ToLower() switch
+            {
+                "name" => p.SortOrder == "asc" ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name),
+                _ => p.SortOrder == "asc" ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name)
+            };
+
+            var totalElements = await query.CountAsync();
+
+            var roles = await query
+                .Skip((p.PageNumber - 1) * p.PageSize)
+                .Take(p.PageSize)
+                .ToListAsync();
+
+            var content = _mapper.Map<List<RoleViewModel>>(roles);
+            return new PaginatedResponse<RoleViewModel>(content, p.PageNumber, p.PageSize, totalElements);
         }
 
         public async Task<RoleViewModel?> GetByIdAsync(Guid id)

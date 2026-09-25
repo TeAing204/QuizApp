@@ -57,9 +57,9 @@ export class AdminQuizQuestionsComponent implements OnInit {
   }
 
   loadAllQuestions(): void {
-    this.questionService.getAll().subscribe({
-      next: (all) => {
-        this.allQuestions = all;
+    this.questionService.getAll({ pageSize: 100 }).subscribe({
+      next: (res) => {
+        this.allQuestions = res.content;
         this.updateAvailableQuestions();
         this.isLoading = false;
       },

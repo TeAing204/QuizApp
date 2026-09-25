@@ -20,10 +20,10 @@ namespace QuizApp.WebAPI.Controllers
         // ===== PUBLIC ENDPOINTS =====
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParams p)
         {
-            var quizzes = await _quizService.GetAllAsync();
-            return Ok(quizzes);
+            var result = await _quizService.GetAllAsync(p);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

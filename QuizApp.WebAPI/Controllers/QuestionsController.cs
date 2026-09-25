@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuizApp.WebAPI.Models.DTOs.Common;
 using QuizApp.WebAPI.Models.DTOs.Question;
 using QuizApp.WebAPI.Services.Interfaces;
 
@@ -20,9 +21,9 @@ namespace QuizApp.WebAPI.Controllers
         // ===== QUESTION CRUD =====
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParams p)
         {
-            return Ok(await _questionService.GetAllAsync());
+            return Ok(await _questionService.GetAllAsync(p));
         }
 
         [HttpGet("{id}")]

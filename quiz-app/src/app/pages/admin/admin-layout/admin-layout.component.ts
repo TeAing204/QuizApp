@@ -18,7 +18,6 @@ export class AdminLayoutComponent {
   isSidebarOpen = true;
 
   menuItems: SidebarItem[] = [
-    { icon: 'fas fa-plus-circle', label: 'Tạo mới', route: '/admin/create' },
     { icon: 'fas fa-clipboard-list', label: 'Quizzes', route: '/admin/quizzes' },
     { icon: 'fas fa-question-circle', label: 'Questions', route: '/admin/questions' },
     { icon: 'fas fa-users', label: 'Users', route: '/admin/users' },

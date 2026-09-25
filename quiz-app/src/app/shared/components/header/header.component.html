@@ -62,19 +62,19 @@
                 </div>
                 <a routerLink="/profile" (click)="isDropdownOpen=false"
                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                  <i class="fas fa-user-circle text-primary-500 w-4"></i> Hồ sơ cá nhân
+                  <i class="fas fa-user-circle text-primary-500 w-4"></i> My Profile
                 </a>
                 <a routerLink="/quiz/history" (click)="isDropdownOpen=false"
                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                  <i class="fas fa-history text-emerald-500 w-4"></i> Lịch sử làm bài
+                  <i class="fas fa-history text-emerald-500 w-4"></i> Quiz History
                 </a>
                 @if (authService.isAdmin()) {
                   <div class="px-4 py-1.5">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Admin Panel</p>
                   </div>
-                  <a routerLink="/admin/create" (click)="isDropdownOpen=false"
+                  <a routerLink="/admin/quizzes/create" (click)="isDropdownOpen=false"
                      class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-pink-500 w-4"></i> Tạo mới
+                    <i class="fas fa-plus-circle text-pink-500 w-4"></i> Create Quiz
                   </a>
                   <a routerLink="/admin/quizzes" (click)="isDropdownOpen=false"
                      class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">

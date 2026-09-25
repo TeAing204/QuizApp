@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { QuestionViewModel, QuestionCreateDto, QuestionEditDto, AnswerViewModel, AnswerCreateDto, AnswerEditDto } from '../models/question.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
@@ -12,8 +13,14 @@ export class QuestionService {
 
   // ===== Question CRUD =====
 
-  getAll(): Observable<QuestionViewModel[]> {
-    return this.http.get<QuestionViewModel[]>(this.apiUrl);
+  getAll(params?: {search?: string, pageNumber?: number, pageSize?: number, sortBy?: string, sortOrder?: string}): Observable<PaginatedResponse<QuestionViewModel>> {
+    let httpParams = new HttpParams();
+    if (params?.search) httpParams = httpParams.set('search', params.search);
+    if (params?.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
+    if (params?.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+    if (params?.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+    if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    return this.http.get<PaginatedResponse<QuestionViewModel>>(this.apiUrl, { params: httpParams });
   }
 
   getById(id: string): Observable<QuestionViewModel> {

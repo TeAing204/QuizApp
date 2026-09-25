@@ -12,14 +12,14 @@
   <div class="mb-6">
     <div class="relative max-w-md">
       <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-search"></i></span>
-      <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search questions..."
+      <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="onSearch()" placeholder="Search questions..."
              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white" />
     </div>
   </div>
 
   @if (isLoading) {
     <div class="text-center py-20"><i class="fas fa-spinner fa-spin text-3xl text-primary-500"></i><p class="text-gray-500 mt-3">Loading...</p></div>
-  } @else if (filteredQuestions.length === 0) {
+  } @else if (questions.length === 0) {
     <div class="text-center py-20 card p-8">
       <i class="fas fa-inbox text-5xl text-gray-300 mb-4"></i>
       <p class="text-gray-500 text-lg">No questions found</p>
@@ -28,7 +28,7 @@
   } @else {
     <!-- Question Cards -->
     <div class="space-y-4">
-      @for (q of paginatedQuestions; track q.id; let i = $index) {
+      @for (q of questions; track q.id; let i = $index) {
         <div class="card p-5 border border-gray-100">
           <div class="flex justify-between items-start gap-4">
             <div class="flex-1 min-w-0">
@@ -83,8 +83,8 @@
         </div>
       }
     </div>
-    <p class="text-sm text-gray-400 mt-4">Showing {{ paginatedQuestions.length }} of {{ filteredQuestions.length }} questions</p>
-    <app-pagination [totalItems]="filteredQuestions.length" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
+    <p class="text-sm text-gray-400 mt-4">Showing {{ questions.length }} of {{ totalElements }} questions</p>
+    <app-pagination [totalItems]="totalElements" [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
   }
 
   <!-- CREATE MODAL (2-Step) -->

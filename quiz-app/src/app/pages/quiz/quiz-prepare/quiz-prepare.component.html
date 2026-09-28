@@ -3,7 +3,7 @@
   @if (isLoading) {
     <div class="text-center">
       <div class="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p class="text-gray-500 font-medium">Đang tải thông tin quiz...</p>
+      <p class="text-gray-500 font-medium">Loading quiz details...</p>
     </div>
   }
 
@@ -12,10 +12,10 @@
       <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
       </div>
-      <h2 class="text-xl font-bold text-gray-800 mb-2">Không thể tải quiz</h2>
+      <h2 class="text-xl font-bold text-gray-800 mb-2">Unable to Load Quiz</h2>
       <p class="text-gray-500 mb-6">{{ errorMessage }}</p>
       <button (click)="goBack()" class="btn-secondary">
-        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+        <i class="fas fa-arrow-left mr-2"></i> Go Back
       </button>
     </div>
   }
@@ -23,10 +23,10 @@
   @if (info && !isLoading) {
     <div class="w-full max-w-lg">
 
-      <!-- Card chính -->
+      <!-- Main Card -->
       <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-        <!-- Header gradient -->
+        <!-- Gradient Header -->
         <div class="bg-gradient-to-r from-violet-600 to-indigo-600 p-8 text-white text-center relative overflow-hidden">
           <div class="absolute inset-0 opacity-10">
             <div class="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-20 -translate-y-20"></div>
@@ -43,54 +43,54 @@
           </div>
         </div>
 
-        <!-- Nội dung -->
+        <!-- Body -->
         <div class="p-8">
 
-          <!-- Thông tin quiz -->
+          <!-- Quiz Stats -->
           <div class="grid grid-cols-2 gap-4 mb-8">
             <div class="bg-violet-50 rounded-2xl p-4 text-center">
               <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <i class="fas fa-clock text-violet-600"></i>
               </div>
               <p class="text-2xl font-bold text-gray-900">{{ info.duration }}</p>
-              <p class="text-xs text-gray-500 font-medium">Phút</p>
+              <p class="text-xs text-gray-500 font-medium">Minutes</p>
             </div>
             <div class="bg-indigo-50 rounded-2xl p-4 text-center">
               <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <i class="fas fa-user text-indigo-600"></i>
               </div>
               <p class="text-sm font-bold text-gray-900 truncate">{{ info.user.displayName || info.user.userName }}</p>
-              <p class="text-xs text-gray-500 font-medium">Thí sinh</p>
+              <p class="text-xs text-gray-500 font-medium">Candidate</p>
             </div>
           </div>
 
-          <!-- Lưu ý -->
+          <!-- Instructions -->
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-8">
             <h3 class="text-sm font-bold text-amber-800 mb-2 flex items-center gap-2">
-              <i class="fas fa-info-circle"></i> Lưu ý trước khi bắt đầu
+              <i class="fas fa-info-circle"></i> Instructions Before You Begin
             </h3>
             <ul class="text-xs text-amber-700 space-y-1.5">
-              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> Đồng hồ sẽ đếm ngược ngay khi nhấn Bắt đầu.</li>
-              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> Không rời khỏi trang khi đang làm bài.</li>
-              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> Bài sẽ tự động nộp khi hết giờ.</li>
+              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> The timer starts immediately upon clicking Start Quiz.</li>
+              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> Do not refresh or navigate away from the page during the quiz.</li>
+              <li class="flex items-start gap-1.5"><i class="fas fa-circle text-[6px] mt-1.5"></i> The quiz will automatically submit when the timer expires.</li>
             </ul>
           </div>
 
-          <!-- Nút hành động -->
+          <!-- Actions -->
           <div class="flex gap-3">
             <button (click)="goBack()"
                     class="flex-1 px-6 py-3.5 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold text-sm
                            hover:border-gray-300 hover:bg-gray-50 transition-all">
-              <i class="fas fa-arrow-left mr-2"></i> Quay lại
+              <i class="fas fa-arrow-left mr-2"></i> Go Back
             </button>
             <button (click)="startQuiz()" [disabled]="isStarting"
                     class="flex-[2] px-6 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-2xl
                            font-bold text-sm hover:from-violet-700 hover:to-indigo-700 transition-all shadow-lg
                            hover:shadow-violet-200 disabled:opacity-70 flex items-center justify-center gap-2">
               @if (isStarting) {
-                <i class="fas fa-spinner fa-spin"></i> Đang chuẩn bị...
+                <i class="fas fa-spinner fa-spin"></i> Preparing...
               } @else {
-                <i class="fas fa-play"></i> Bắt đầu làm bài
+                <i class="fas fa-play"></i> Start Quiz
               }
             </button>
           </div>

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { QuestionService } from '../../../../services/question.service';
 import { QuestionViewModel, QuestionCreateDto, AnswerCreateDto, AnswerViewModel } from '../../../../models/question.model';
+import { ConfirmService } from '../../../../services/confirm.service';
+import { ToastService } from '../../../../services/toast.service';
 
 interface AnswerInput {
   content: string;
@@ -50,9 +52,24 @@ export class AdminQuestionListComponent implements OnInit {
   answerInputs: AnswerInput[] = [];
   newAnswerContent = '';
 
-  constructor(private questionService: QuestionService) {}
+  constructor(
+    private questionService: QuestionService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
+  ) {}
 
-  ngOnInit(): void { this.loadQuestions(); }
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.searchTerm = params['search'] || '';
+      this.currentPage = params['page'] ? +params['page'] : 1;
+      this.pageSize = params['pageSize'] ? +params['pageSize'] : 10;
+      this.sortBy = params['sortBy'] || 'createdAt';
+      this.sortOrder = params['sortOrder'] || 'desc';
+      this.loadQuestions();
+    });
+  }
 
   loadQuestions(): void {
     this.isLoading = true;
@@ -72,14 +89,29 @@ export class AdminQuestionListComponent implements OnInit {
     });
   }
 
+  private updateUrl(): void {
+    const queryParams: any = {};
+    if (this.searchTerm) queryParams.search = this.searchTerm;
+    if (this.currentPage > 1) queryParams.page = this.currentPage;
+    if (this.pageSize !== 10) queryParams.pageSize = this.pageSize;
+    if (this.sortBy !== 'createdAt') queryParams.sortBy = this.sortBy;
+    if (this.sortOrder !== 'desc') queryParams.sortOrder = this.sortOrder;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true
+    });
+  }
+
   onSearch(): void {
     this.currentPage = 1;
-    this.loadQuestions();
+    this.updateUrl();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadQuestions();
+    this.updateUrl();
   }
 
   onSort(field: string): void {
@@ -90,13 +122,22 @@ export class AdminQuestionListComponent implements OnInit {
       this.sortOrder = 'asc';
     }
     this.currentPage = 1;
-    this.loadQuestions();
+    this.updateUrl();
   }
 
-  deleteQuestion(id: string, content: string): void {
+  async deleteQuestion(id: string, content: string): Promise<void> {
     const short = content.length > 50 ? content.substring(0, 50) + '...' : content;
-    if (!confirm(`Delete "${short}"?`)) return;
-    this.questionService.delete(id).subscribe({ next: () => this.loadQuestions() });
+    const ok = await this.confirmService.confirm({
+      title: 'Delete Question',
+      message: `Are you sure you want to delete "${short}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      type: 'danger'
+    });
+    if (!ok) return;
+    this.questionService.delete(id).subscribe({
+      next: () => { this.toastService.success('Question deleted successfully!'); this.loadQuestions(); },
+      error: (err) => this.toastService.error(err.error?.message || 'Failed to delete question.')
+    });
   }
 
   // -- Expand/Collapse answers --
@@ -140,19 +181,19 @@ export class AdminQuestionListComponent implements OnInit {
   closeModal(): void { this.showModal = false; }
 
   createQuestion(): void {
-    if (!this.newQuestion.content.trim()) { this.modalError = 'Nội dung câu hỏi là bắt buộc.'; return; }
+    if (!this.newQuestion.content.trim()) { this.modalError = 'Question content is required.'; return; }
     this.isSubmitting = true;
     this.modalError = '';
     this.questionService.create(this.newQuestion).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
-        // Backend trả về object có id
         if (res && typeof res === 'object' && res.id) {
           this.createdQuestionId = res.id;
         }
         this.modalStep = 'answers';
+        this.toastService.success('Question created! Now add answers.');
       },
-      error: (err) => { this.isSubmitting = false; this.modalError = err.error?.message || 'Tạo câu hỏi thất bại.'; }
+      error: (err) => { this.isSubmitting = false; this.modalError = err.error?.message || 'Failed to create question.'; }
     });
   }
 
@@ -170,8 +211,8 @@ export class AdminQuestionListComponent implements OnInit {
   }
 
   saveAnswers(): void {
-    if (this.answerInputs.length < 2) { this.modalError = 'Cần ít nhất 2 đáp án.'; return; }
-    if (!this.answerInputs.some(a => a.isCorrect)) { this.modalError = 'Đánh dấu ít nhất 1 đáp án đúng.'; return; }
+    if (this.answerInputs.length < 2) { this.modalError = 'At least 2 answers are required.'; return; }
+    if (!this.answerInputs.some(a => a.isCorrect)) { this.modalError = 'Mark at least 1 correct answer.'; return; }
 
     this.isSubmitting = true;
     this.modalError = '';
@@ -187,7 +228,7 @@ export class AdminQuestionListComponent implements OnInit {
       };
       this.questionService.addAnswer(this.createdQuestionId, dto).subscribe({
         next: () => { completed++; if (completed === total) { this.isSubmitting = false; this.closeModal(); this.loadQuestions(); } },
-        error: () => { completed++; if (completed === total) { this.isSubmitting = false; this.modalError = 'Một số đáp án không tạo được.'; } }
+        error: () => { completed++; if (completed === total) { this.isSubmitting = false; this.modalError = 'Failed to create some answers.'; } }
       });
     });
   }

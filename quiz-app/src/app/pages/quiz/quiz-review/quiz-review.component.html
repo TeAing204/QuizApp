@@ -20,7 +20,7 @@
       <!-- Back Button -->
       <a routerLink="/quiz/history"
          class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 mb-6 transition-colors">
-        <i class="fas fa-arrow-left"></i> Quay lại lịch sử
+        <i class="fas fa-arrow-left"></i> Back to History
       </a>
 
       <!-- Score Card Header -->
@@ -48,7 +48,7 @@
               <p class="text-white/80 text-sm mb-3">{{ gradeLabel }}</p>
               <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-white/70 text-xs">
                 <span class="flex items-center gap-1.5">
-                  <i class="fas fa-check-circle"></i> {{ detail.correctAnswers }}/{{ detail.totalQuestions }} câu đúng
+                  <i class="fas fa-check-circle"></i> {{ detail.correctAnswers }}/{{ detail.totalQuestions }} correct
                 </span>
                 <span class="flex items-center gap-1.5">
                   <i class="fas fa-stopwatch"></i> {{ getTimeDuration() }}
@@ -67,22 +67,22 @@
         <div class="grid grid-cols-3 divide-x divide-gray-100">
           <div class="text-center py-4">
             <p class="text-xl font-bold text-green-600">{{ detail.correctAnswers }}</p>
-            <p class="text-xs text-gray-500">Câu đúng</p>
+            <p class="text-xs text-gray-500">Correct</p>
           </div>
           <div class="text-center py-4">
             <p class="text-xl font-bold text-red-500">{{ detail.totalQuestions - detail.correctAnswers }}</p>
-            <p class="text-xs text-gray-500">Câu sai</p>
+            <p class="text-xs text-gray-500">Incorrect</p>
           </div>
           <div class="text-center py-4">
             <p class="text-xl font-bold text-gray-700">{{ detail.totalQuestions }}</p>
-            <p class="text-xs text-gray-500">Tổng câu</p>
+            <p class="text-xs text-gray-500">Total</p>
           </div>
         </div>
       </div>
 
       <!-- Questions List -->
       <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <i class="fas fa-list-ol text-primary-500"></i> Chi tiết từng câu hỏi
+        <i class="fas fa-list-ol text-primary-500"></i> Question Details
       </h2>
 
       <div class="space-y-4">
@@ -109,10 +109,10 @@
                         [class]="question.isCorrect
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-700'">
-                    {{ question.isCorrect ? '✓ Đúng' : '✗ Sai' }}
+                    {{ question.isCorrect ? '✓ Correct' : '✗ Incorrect' }}
                   </span>
                   <span class="text-[10px] text-gray-400 uppercase tracking-wider">
-                    {{ question.questionType === 'MultipleChoice' ? 'Nhiều đáp án' : 'Một đáp án' }}
+                    {{ question.questionType === 'MultipleChoice' ? 'Multiple Choice' : 'Single Choice' }}
                   </span>
                 </div>
               </div>
@@ -156,12 +156,12 @@
                             [class]="answer.isCorrect
                               ? 'bg-green-100 text-green-700'
                               : 'bg-red-100 text-red-700'">
-                        {{ answer.isCorrect ? 'Đã chọn ✓' : 'Đã chọn ✗' }}
+                        {{ answer.isCorrect ? 'Selected ✓' : 'Selected ✗' }}
                       </span>
                     }
                     @if (answer.isCorrect && !answer.isSelected) {
                       <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-100 text-emerald-700">
-                        Đáp án đúng
+                        Correct Answer
                       </span>
                     }
                   </div>
@@ -177,13 +177,13 @@
         <a routerLink="/quiz/history"
            class="flex-1 px-6 py-3.5 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold
                   text-sm text-center hover:border-gray-300 hover:bg-gray-50 transition-all">
-          <i class="fas fa-history mr-2"></i> Lịch sử làm bài
+          <i class="fas fa-history mr-2"></i> Quiz History
         </a>
         <a routerLink="/quizzes"
            class="flex-[2] px-6 py-3.5 bg-gradient-to-r from-primary-600 to-accent-600 text-white
                   rounded-2xl font-bold text-sm text-center hover:shadow-lg transition-all
                   flex items-center justify-center gap-2">
-          <i class="fas fa-play"></i> Làm bài quiz khác
+          <i class="fas fa-play"></i> Take Another Quiz
         </a>
       </div>
     }

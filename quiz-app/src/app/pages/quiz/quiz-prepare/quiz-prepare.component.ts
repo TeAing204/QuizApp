@@ -38,7 +38,7 @@ export class QuizPrepareComponent implements OnInit {
     this.quizService.prepareQuiz({ userId: user.id, quizId: this.quizId }).subscribe({
       next: (info) => { this.info = info; this.isLoading = false; },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Không thể tải thông tin quiz.';
+        this.errorMessage = err.error?.message || 'Failed to load quiz details.';
         this.isLoading = false;
       }
     });
@@ -51,13 +51,13 @@ export class QuizPrepareComponent implements OnInit {
 
     this.quizService.takeQuiz({ userId: user.id, quizId: this.quizId }).subscribe({
       next: (quiz) => {
-        // Lưu dữ liệu quiz vào sessionStorage để dùng ở Take page
+        // Save quiz data in sessionStorage to use on Take page
         sessionStorage.setItem('active_quiz', JSON.stringify(quiz));
         this.router.navigate(['/quiz', this.quizId, 'take']);
       },
       error: (err) => {
         this.isStarting = false;
-        this.errorMessage = err.error?.message || 'Không thể bắt đầu quiz.';
+        this.errorMessage = err.error?.message || 'Failed to start quiz.';
       }
     });
   }

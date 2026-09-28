@@ -26,10 +26,10 @@ export class QuizResultComponent implements OnInit {
 
   get gradeLabel(): string {
     const s = this.scorePercent;
-    if (s >= 90) return 'Xuất sắc';
-    if (s >= 75) return 'Tốt';
-    if (s >= 50) return 'Trung bình';
-    return 'Cần cố gắng thêm';
+    if (s >= 90) return 'Excellent';
+    if (s >= 75) return 'Good';
+    if (s >= 50) return 'Average';
+    return 'Needs Improvement';
   }
 
   get gradeColor(): string {

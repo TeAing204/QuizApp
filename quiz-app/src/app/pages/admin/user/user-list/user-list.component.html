@@ -3,10 +3,10 @@
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <div>
       <h1 class="section-title"><i class="fas fa-users mr-2 text-primary-500"></i>User Management</h1>
-      <p class="text-gray-500 text-sm">Quản lý tài khoản người dùng trong hệ thống.</p>
+      <p class="text-gray-500 text-sm">Manage user accounts in the system.</p>
     </div>
     <a routerLink="/admin/users/create" class="btn-primary text-sm flex items-center gap-2">
-      <i class="fas fa-plus"></i> Thêm User
+      <i class="fas fa-plus"></i> Add User
     </a>
   </div>
 
@@ -15,7 +15,7 @@
     <div class="relative max-w-md">
       <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
       <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="onSearch()"
-             placeholder="Tìm kiếm theo tên, email, username..."
+             placeholder="Search by name, email, username..."
              class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm
                     focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm" />
     </div>
@@ -32,7 +32,7 @@
   @if (!isLoading && users.length === 0) {
     <div class="text-center py-16 text-gray-400">
       <i class="fas fa-users text-4xl mb-3"></i>
-      <p class="text-lg font-medium">Chưa có user nào.</p>
+      <p class="text-lg font-medium">No users found.</p>
     </div>
   }
 

@@ -6,6 +6,8 @@ import { QuizService } from '../../../../services/quiz.service';
 import { QuestionService } from '../../../../services/question.service';
 import { QuizCreateDto, QuizEditDto } from '../../../../models/quiz.model';
 import { QuestionViewModel, QuestionCreateDto, AnswerCreateDto } from '../../../../models/question.model';
+import { ConfirmService } from '../../../../services/confirm.service';
+import { ToastService } from '../../../../services/toast.service';
 
 interface QuestionTypeOption {
   type: string;
@@ -52,11 +54,11 @@ export class AdminQuizFormComponent implements OnInit {
 
   // Question types
   questionTypes: QuestionTypeOption[] = [
-    { type: 'SingleChoice', label: 'Câu hỏi trắc nghiệm', icon: 'fas fa-check-square', color: 'bg-emerald-500', description: 'Chọn 1 đáp án đúng' },
-    { type: 'MultipleChoice', label: 'Chọn nhiều lần', icon: 'fas fa-check-double', color: 'bg-teal-500', description: 'Chọn nhiều đáp án đúng' },
-    { type: 'TrueFalse', label: 'Đúng hay sai', icon: 'fas fa-exchange-alt', color: 'bg-rose-500', description: 'Chọn Đúng hoặc Sai' },
-    { type: 'FillInTheBlanks', label: 'Điền vào chỗ trống', icon: 'fas fa-pen-fancy', color: 'bg-amber-500', description: 'Điền câu trả lời' },
-    { type: 'ShortAnswer', label: 'Câu hỏi mở', icon: 'fas fa-align-left', color: 'bg-blue-500', description: 'Trả lời tự do' }
+    { type: 'SingleChoice', label: 'Single Choice', icon: 'fas fa-check-square', color: 'bg-emerald-500', description: 'Choose 1 correct answer' },
+    { type: 'MultipleChoice', label: 'Multiple Choice', icon: 'fas fa-check-double', color: 'bg-teal-500', description: 'Choose multiple correct answers' },
+    { type: 'TrueFalse', label: 'True / False', icon: 'fas fa-exchange-alt', color: 'bg-rose-500', description: 'Choose True or False' },
+    { type: 'FillInTheBlanks', label: 'Fill in the Blanks', icon: 'fas fa-pen-fancy', color: 'bg-amber-500', description: 'Enter accepted answers' },
+    { type: 'ShortAnswer', label: 'Short Answer / Essay', icon: 'fas fa-align-left', color: 'bg-blue-500', description: 'Free-form answer' }
   ];
 
   // Inline editor state
@@ -80,7 +82,9 @@ export class AdminQuizFormComponent implements OnInit {
     private quizService: QuizService,
     private questionService: QuestionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -118,7 +122,7 @@ export class AdminQuizFormComponent implements OnInit {
 
   // ===== QUIZ SAVE =====
   onSaveQuiz(): void {
-    if (!this.formData.title.trim()) { this.errorMessage = 'Vui lòng nhập tiêu đề quiz.'; return; }
+    if (!this.formData.title.trim()) { this.errorMessage = 'Please enter a quiz title.'; return; }
     this.errorMessage = '';
     this.isSaving = true;
 
@@ -129,14 +133,14 @@ export class AdminQuizFormComponent implements OnInit {
           this.isSaving = false;
           this.router.navigate(['/admin/quizzes']);
         },
-        error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Lưu thất bại.'; }
+        error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Failed to save quiz.'; }
       });
     } else {
       const dto: QuizCreateDto = { ...this.formData };
       this.quizService.create(dto).subscribe({
         next: (res: any) => {
           this.isSaving = false;
-          // Backend có thể trả về object {id: ...} hoặc string ID trực tiếp
+          // Backend may return object {id: ...} or string ID directly
           let newId = '';
           if (res && typeof res === 'object' && res.id) {
             newId = res.id;
@@ -147,15 +151,15 @@ export class AdminQuizFormComponent implements OnInit {
           if (newId) {
             this.isEditMode = true;
             this.quizId = newId;
-            // Navigate sang URL edit để đảm bảo state đúng
+            // Navigate to edit URL
             this.router.navigate(['/admin/quizzes', newId, 'edit'], { replaceUrl: true });
-            this.successMessage = 'Đã tạo quiz! Bây giờ hãy thêm câu hỏi.';
+            this.successMessage = 'Quiz created! Now you can add questions.';
           } else {
-            this.successMessage = 'Đã tạo quiz! Vui lòng vào danh sách quiz để chỉnh sửa và thêm câu hỏi.';
+            this.successMessage = 'Quiz created! Please open it to add questions.';
           }
           setTimeout(() => this.successMessage = '', 4000);
         },
-        error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Tạo thất bại.'; }
+        error: (err) => { this.isSaving = false; this.errorMessage = err.error?.message || 'Failed to create quiz.'; }
       });
     }
   }
@@ -179,8 +183,8 @@ export class AdminQuizFormComponent implements OnInit {
 
     if (type.type === 'TrueFalse') {
       this.newQuestion.answers = [
-        { content: 'Đúng', isCorrect: false },
-        { content: 'Sai', isCorrect: false }
+        { content: 'True', isCorrect: false },
+        { content: 'False', isCorrect: false }
       ];
     }
   }
@@ -218,25 +222,25 @@ export class AdminQuizFormComponent implements OnInit {
   // ===== CREATE QUESTION & ADD TO QUIZ =====
   createAndAddQuestion(): void {
     if (!this.newQuestion.content.trim()) {
-      this.editorError = 'Vui lòng nhập nội dung câu hỏi.';
+      this.editorError = 'Please enter question content.';
       return;
     }
 
     const type = this.newQuestion.questionType;
     if (type === 'SingleChoice' || type === 'MultipleChoice' || type === 'TrueFalse') {
       if (this.newQuestion.answers.length < 2) {
-        this.editorError = 'Cần ít nhất 2 đáp án.';
+        this.editorError = 'At least 2 answers are required.';
         return;
       }
       if (!this.newQuestion.answers.some(a => a.isCorrect)) {
-        this.editorError = 'Vui lòng chọn ít nhất 1 đáp án đúng.';
+        this.editorError = 'Please mark at least 1 correct answer.';
         return;
       }
     }
 
     if (type === 'FillInTheBlanks') {
       if (this.newQuestion.answers.length < 1) {
-        this.editorError = 'Vui lòng thêm ít nhất 1 đáp án đúng.';
+        this.editorError = 'Please add at least 1 accepted answer.';
         return;
       }
     }
@@ -252,7 +256,6 @@ export class AdminQuizFormComponent implements OnInit {
 
     this.questionService.create(createDto).subscribe({
       next: (createRes: any) => {
-        // Thử lấy ID từ response trước
         let questionId = '';
         if (createRes && typeof createRes === 'object' && createRes.id) {
           questionId = createRes.id;
@@ -296,10 +299,8 @@ export class AdminQuizFormComponent implements OnInit {
         };
 
         if (questionId) {
-          // Nếu backend trả về ID trực tiếp → dùng luôn
           processQuestion(questionId);
         } else {
-          // Fallback: lấy danh sách và tìm câu hỏi cuối cùng (mới nhất)
           this.questionService.getAll({ pageSize: 100, sortBy: 'createdAt', sortOrder: 'desc' }).subscribe({
             next: (res) => {
               const createdQ = res.content.length > 0 ? res.content[0] : null;
@@ -314,7 +315,7 @@ export class AdminQuizFormComponent implements OnInit {
       },
       error: (err) => {
         this.isCreatingQuestion = false;
-        this.editorError = err.error?.message || 'Tạo câu hỏi thất bại.';
+        this.editorError = err.error?.message || 'Failed to create question.';
       }
     });
   }
@@ -322,15 +323,21 @@ export class AdminQuizFormComponent implements OnInit {
   finishQuestionCreation(): void {
     this.isCreatingQuestion = false;
     this.selectedType = null;
-    this.successMessage = 'Đã thêm câu hỏi thành công!';
+    this.successMessage = 'Question added successfully!';
     setTimeout(() => this.successMessage = '', 3000);
   }
 
   // ===== REMOVE QUESTION FROM QUIZ =====
-  removeQuizQuestion(quizQuestionId: string): void {
-    if (!confirm('Xóa câu hỏi này khỏi quiz?')) return;
+  async removeQuizQuestion(quizQuestionId: string): Promise<void> {
+    const ok = await this.confirmService.confirm({
+      title: 'Remove Question',
+      message: 'Remove this question from quiz?',
+      confirmText: 'Remove',
+      type: 'warning'
+    });
+    if (!ok) return;
     this.quizService.removeQuestion(this.quizId, quizQuestionId).subscribe({
-      next: () => this.loadQuizQuestions()
+      next: () => { this.toastService.success('Question removed!'); this.loadQuizQuestions(); }
     });
   }
 
@@ -355,17 +362,17 @@ export class AdminQuizFormComponent implements OnInit {
 
   addFromBank(question: QuestionViewModel): void {
     if (!this.isEditMode) {
-      this.errorMessage = 'Vui lòng lưu quiz trước khi thêm câu hỏi từ thư viện.';
+      this.errorMessage = 'Please save the quiz before adding questions from the bank.';
       return;
     }
     this.quizService.addQuestion({ quizId: this.quizId, questionId: question.id }).subscribe({
       next: () => {
         this.loadQuizQuestions();
-        this.successMessage = `Đã thêm: "${question.content.substring(0, 40)}..."`;
+        this.successMessage = `Added: "${question.content.substring(0, 40)}..."`;
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Câu hỏi đã tồn tại trong quiz.';
+        this.errorMessage = err.error?.message || 'Question already exists in this quiz.';
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });

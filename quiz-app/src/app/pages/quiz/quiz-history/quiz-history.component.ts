@@ -34,7 +34,7 @@ export class QuizHistoryComponent implements OnInit {
   loadHistory(): void {
     const user = this.authService.getCurrentUser();
     if (!user) {
-      this.errorMessage = 'Bạn cần đăng nhập để xem lịch sử.';
+      this.errorMessage = 'You must be logged in to view history.';
       this.isLoading = false;
       return;
     }
@@ -46,7 +46,7 @@ export class QuizHistoryComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Không thể tải lịch sử.';
+        this.errorMessage = err.error?.message || 'Failed to load quiz history.';
         this.isLoading = false;
       }
     });
@@ -82,7 +82,7 @@ export class QuizHistoryComponent implements OnInit {
 
   formatDate(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('vi-VN', {
+    return date.toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
@@ -94,7 +94,7 @@ export class QuizHistoryComponent implements OnInit {
     const diffMs = end.getTime() - start.getTime();
     const mins = Math.floor(diffMs / 60000);
     const secs = Math.floor((diffMs % 60000) / 1000);
-    if (mins > 0) return `${mins} phút ${secs} giây`;
-    return `${secs} giây`;
+    if (mins > 0) return `${mins}m ${secs}s`;
+    return `${secs}s`;
   }
 }

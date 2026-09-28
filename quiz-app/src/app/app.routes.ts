@@ -60,14 +60,14 @@ export const routes: Routes = [
   },
 
   // ===== USER QUIZ-TAKING FLOW (protected) =====
-  { path: 'quiz/history', component: QuizHistoryComponent, canActivate: [authGuard], title: 'QuizApp - Lịch sử làm bài' },
-  { path: 'quiz/review/:attemptId', component: QuizReviewComponent, canActivate: [authGuard], title: 'QuizApp - Xem lại bài làm' },
-  { path: 'quiz/:id/prepare', component: QuizPrepareComponent, canActivate: [authGuard], title: 'Chuẩn bị làm bài' },
-  { path: 'quiz/:id/take', component: QuizTakeComponent, canActivate: [authGuard], title: 'Làm bài' },
-  { path: 'quiz/:id/result', component: QuizResultComponent, canActivate: [authGuard], title: 'Kết quả' },
+  { path: 'quiz/history', component: QuizHistoryComponent, canActivate: [authGuard], title: 'QuizApp - Quiz History' },
+  { path: 'quiz/review/:attemptId', component: QuizReviewComponent, canActivate: [authGuard], title: 'QuizApp - Quiz Review' },
+  { path: 'quiz/:id/prepare', component: QuizPrepareComponent, canActivate: [authGuard], title: 'QuizApp - Prepare Quiz' },
+  { path: 'quiz/:id/take', component: QuizTakeComponent, canActivate: [authGuard], title: 'QuizApp - Take Quiz' },
+  { path: 'quiz/:id/result', component: QuizResultComponent, canActivate: [authGuard], title: 'QuizApp - Quiz Result' },
 
   // ===== USER PROFILE (protected) =====
-  { path: 'profile', component: ProfileComponent, canActivate: [authGuard], title: 'QuizApp - Hồ sơ cá nhân' },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard], title: 'QuizApp - Profile' },
 
   // ===== FALLBACK =====
   { path: '**', redirectTo: '', pathMatch: 'full' }

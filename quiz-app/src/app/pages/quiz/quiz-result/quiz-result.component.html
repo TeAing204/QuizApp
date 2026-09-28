@@ -44,40 +44,40 @@
                 <i class="fas fa-check text-green-600"></i>
               </div>
               <p class="text-2xl font-black text-green-700">{{ result.correctAnswers }}</p>
-              <p class="text-xs text-gray-500 font-medium mt-0.5">Câu đúng</p>
+              <p class="text-xs text-gray-500 font-medium mt-0.5">Correct</p>
             </div>
             <div class="text-center p-4 bg-red-50 rounded-2xl">
               <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <i class="fas fa-times text-red-500"></i>
               </div>
               <p class="text-2xl font-black text-red-600">{{ result.totalQuestions - result.correctAnswers }}</p>
-              <p class="text-xs text-gray-500 font-medium mt-0.5">Câu sai</p>
+              <p class="text-xs text-gray-500 font-medium mt-0.5">Incorrect</p>
             </div>
             <div class="text-center p-4 bg-gray-50 rounded-2xl">
               <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2">
                 <i class="fas fa-list-ol text-gray-500"></i>
               </div>
               <p class="text-2xl font-black text-gray-700">{{ result.totalQuestions }}</p>
-              <p class="text-xs text-gray-500 font-medium mt-0.5">Tổng câu</p>
+              <p class="text-xs text-gray-500 font-medium mt-0.5">Total</p>
             </div>
           </div>
 
-          <!-- Thời gian nộp bài -->
+          <!-- Submitted Time -->
           <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl mb-8 text-sm text-gray-500">
             <i class="fas fa-calendar-check text-gray-400"></i>
-            <span>Nộp bài lúc: <strong class="text-gray-700">{{ result.submittedAt | date:'dd/MM/yyyy HH:mm' }}</strong></span>
+            <span>Submitted at: <strong class="text-gray-700">{{ result.submittedAt | date:'dd/MM/yyyy HH:mm' }}</strong></span>
           </div>
 
-          <!-- Thông điệp động viên -->
+          <!-- Feedback message -->
           <div class="text-center mb-8">
             @if (scorePercent >= 90) {
-              <p class="text-gray-600 text-sm">🎉 Xuất sắc! Bạn đã làm rất tốt!</p>
+              <p class="text-gray-600 text-sm">🎉 Outstanding! You did an amazing job!</p>
             } @else if (scorePercent >= 75) {
-              <p class="text-gray-600 text-sm">👍 Bạn đã làm tốt, hãy tiếp tục phấn đấu!</p>
+              <p class="text-gray-600 text-sm">👍 Well done! Keep up the good work!</p>
             } @else if (scorePercent >= 50) {
-              <p class="text-gray-600 text-sm">📚 Bạn cần ôn luyện thêm một chút!</p>
+              <p class="text-gray-600 text-sm">📚 Good effort! A little more practice will get you there!</p>
             } @else {
-              <p class="text-gray-600 text-sm">💪 Đừng nản! Hãy ôn lại và thử lại nhé!</p>
+              <p class="text-gray-600 text-sm">💪 Don't give up! Review the material and try again!</p>
             }
           </div>
 
@@ -86,13 +86,13 @@
             <button (click)="goHome()"
                     class="flex-1 px-6 py-3.5 border-2 border-gray-200 text-gray-600 rounded-2xl font-semibold
                            text-sm hover:border-gray-300 hover:bg-gray-50 transition-all">
-              <i class="fas fa-home mr-2"></i> Trang chủ
+              <i class="fas fa-home mr-2"></i> Home
             </button>
             <button (click)="retakeQuiz()"
                     class="flex-[2] px-6 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white
                            rounded-2xl font-bold text-sm hover:from-violet-700 hover:to-indigo-700
                            transition-all shadow-lg flex items-center justify-center gap-2">
-              <i class="fas fa-redo"></i> Làm lại
+              <i class="fas fa-redo"></i> Retake Quiz
             </button>
           </div>
         </div>

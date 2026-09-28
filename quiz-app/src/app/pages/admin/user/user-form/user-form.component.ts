@@ -83,7 +83,7 @@ export class AdminUserFormComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Không thể tải thông tin user.';
+        this.errorMessage = 'Failed to load user details.';
         this.isLoading = false;
       }
     });
@@ -95,25 +95,25 @@ export class AdminUserFormComponent implements OnInit {
 
     // Validation
     if (!this.formData.firstName.trim() || !this.formData.lastName.trim()) {
-      this.errorMessage = 'Vui lòng nhập họ và tên.';
+      this.errorMessage = 'Please enter first and last name.';
       return;
     }
     if (!this.formData.email.trim()) {
-      this.errorMessage = 'Vui lòng nhập email.';
+      this.errorMessage = 'Please enter email address.';
       return;
     }
     if (!this.formData.userName.trim()) {
-      this.errorMessage = 'Vui lòng nhập username.';
+      this.errorMessage = 'Please enter username.';
       return;
     }
 
     if (!this.isEditMode) {
       if (!this.formData.password || this.formData.password.length < 6) {
-        this.errorMessage = 'Mật khẩu phải có ít nhất 6 ký tự.';
+        this.errorMessage = 'Password must be at least 6 characters.';
         return;
       }
       if (this.formData.password !== this.formData.confirmPassword) {
-        this.errorMessage = 'Mật khẩu xác nhận không khớp.';
+        this.errorMessage = 'Password confirmation does not match.';
         return;
       }
     }
@@ -135,12 +135,12 @@ export class AdminUserFormComponent implements OnInit {
       this.userService.update(this.userId, dto).subscribe({
         next: () => {
           this.isSaving = false;
-          this.successMessage = 'Cập nhật user thành công!';
+          this.successMessage = 'User updated successfully!';
           setTimeout(() => this.router.navigate(['/admin/users']), 1500);
         },
         error: (err) => {
           this.isSaving = false;
-          this.errorMessage = err.error?.message || 'Cập nhật thất bại.';
+          this.errorMessage = err.error?.message || 'Update failed.';
         }
       });
     } else {
@@ -159,12 +159,12 @@ export class AdminUserFormComponent implements OnInit {
       this.userService.create(dto).subscribe({
         next: () => {
           this.isSaving = false;
-          this.successMessage = 'Tạo user thành công!';
+          this.successMessage = 'User created successfully!';
           setTimeout(() => this.router.navigate(['/admin/users']), 1500);
         },
         error: (err) => {
           this.isSaving = false;
-          this.errorMessage = err.error?.message || 'Tạo user thất bại.';
+          this.errorMessage = err.error?.message || 'Failed to create user.';
         }
       });
     }

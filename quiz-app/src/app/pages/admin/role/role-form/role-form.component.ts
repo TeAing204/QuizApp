@@ -52,7 +52,7 @@ export class AdminRoleFormComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Không thể tải thông tin vai trò.';
+        this.errorMessage = 'Failed to load role details.';
         this.isLoading = false;
       }
     });
@@ -63,7 +63,7 @@ export class AdminRoleFormComponent implements OnInit {
     this.successMessage = '';
 
     if (!this.formData.name.trim()) {
-      this.errorMessage = 'Vui lòng nhập tên vai trò.';
+      this.errorMessage = 'Please enter role name.';
       return;
     }
 
@@ -79,12 +79,12 @@ export class AdminRoleFormComponent implements OnInit {
       this.roleService.update(this.roleId, dto).subscribe({
         next: () => {
           this.isSaving = false;
-          this.successMessage = 'Cập nhật vai trò thành công!';
+          this.successMessage = 'Role updated successfully!';
           setTimeout(() => this.router.navigate(['/admin/roles']), 1500);
         },
         error: (err) => {
           this.isSaving = false;
-          this.errorMessage = err.error?.message || 'Cập nhật thất bại.';
+          this.errorMessage = err.error?.message || 'Update failed.';
         }
       });
     } else {
@@ -96,12 +96,12 @@ export class AdminRoleFormComponent implements OnInit {
       this.roleService.create(dto).subscribe({
         next: () => {
           this.isSaving = false;
-          this.successMessage = 'Tạo vai trò thành công!';
+          this.successMessage = 'Role created successfully!';
           setTimeout(() => this.router.navigate(['/admin/roles']), 1500);
         },
         error: (err) => {
           this.isSaving = false;
-          this.errorMessage = err.error?.message || 'Tạo vai trò thất bại.';
+          this.errorMessage = err.error?.message || 'Failed to create role.';
         }
       });
     }

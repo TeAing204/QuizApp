@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { QuestionService } from '../../../../services/question.service';
 import { QuestionCreateDto, QuestionEditDto, AnswerViewModel, AnswerCreateDto, AnswerEditDto } from '../../../../models/question.model';
+import { ConfirmService } from '../../../../services/confirm.service';
+import { ToastService } from '../../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-question-form',
@@ -42,7 +44,9 @@ export class AdminQuestionFormComponent implements OnInit {
   constructor(
     private questionService: QuestionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +68,7 @@ export class AdminQuestionFormComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Không thể tải câu hỏi.';
+        this.errorMessage = err.error?.message || 'Failed to load question.';
         this.isLoading = false;
       }
     });
@@ -72,7 +76,7 @@ export class AdminQuestionFormComponent implements OnInit {
 
   saveQuestion(): void {
     if (!this.questionContent.trim()) {
-      this.errorMessage = 'Nội dung câu hỏi là bắt buộc.';
+      this.errorMessage = 'Question content is required.';
       return;
     }
 
@@ -90,12 +94,12 @@ export class AdminQuestionFormComponent implements OnInit {
       this.questionService.update(this.questionId, dto).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.successMessage = 'Cập nhật câu hỏi thành công!';
+          this.successMessage = 'Question updated successfully!';
           setTimeout(() => this.successMessage = '', 3000);
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.errorMessage = err.error?.message || 'Cập nhật thất bại.';
+          this.errorMessage = err.error?.message || 'Update failed.';
         }
       });
     } else {
@@ -111,7 +115,7 @@ export class AdminQuestionFormComponent implements OnInit {
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.errorMessage = err.error?.message || 'Tạo câu hỏi thất bại.';
+          this.errorMessage = err.error?.message || 'Failed to create question.';
         }
       });
     }
@@ -198,18 +202,26 @@ export class AdminQuestionFormComponent implements OnInit {
     }
   }
 
-  deleteAnswer(answer: AnswerViewModel): void {
-    if (!confirm(`Xóa đáp án "${answer.content.substring(0, 40)}..."?`)) return;
+  async deleteAnswer(answer: AnswerViewModel): Promise<void> {
+    const short = answer.content.length > 40 ? answer.content.substring(0, 40) + '...' : answer.content;
+    const ok = await this.confirmService.confirm({
+      title: 'Delete Answer',
+      message: `Delete answer "${short}"?`,
+      confirmText: 'Delete',
+      type: 'danger'
+    });
+    if (!ok) return;
     this.questionService.deleteAnswer(this.questionId, answer.id).subscribe({
-      next: () => this.loadAnswers()
+      next: () => { this.toastService.success('Answer deleted!'); this.loadAnswers(); },
+      error: () => this.toastService.error('Failed to delete answer.')
     });
   }
 
   getTypeLabel(type: string): string {
     const map: Record<string, string> = {
-      'SingleChoice': 'Một đáp án',
-      'MultipleChoice': 'Nhiều đáp án',
-      'TrueFalse': 'Đúng/Sai'
+      'SingleChoice': 'Single Choice',
+      'MultipleChoice': 'Multiple Choice',
+      'TrueFalse': 'True/False'
     };
     return map[type] || type;
   }

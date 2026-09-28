@@ -56,7 +56,7 @@ export class QuizzesComponent implements OnInit {
 
   joinByCode(): void {
     if (!this.quizCode.trim()) {
-      this.codeError = 'Vui lòng nhập mã đề thi.';
+      this.codeError = 'Please enter a quiz code.';
       return;
     }
     if (!this.authService.isLoggedIn()) {
@@ -65,7 +65,7 @@ export class QuizzesComponent implements OnInit {
     }
     this.codeError = '';
 
-    // Tìm quiz có quizCode khớp — sử dụng prepareQuiz với quizCode
+    // Find quiz matching quizCode — using prepareQuiz with quizCode
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
@@ -80,7 +80,7 @@ export class QuizzesComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.codeError = err.error?.message || 'Mã đề thi không hợp lệ hoặc không tồn tại.';
+        this.codeError = err.error?.message || 'Invalid or non-existent quiz code.';
       }
     });
   }

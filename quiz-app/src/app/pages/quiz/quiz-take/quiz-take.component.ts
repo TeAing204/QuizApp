@@ -19,9 +19,9 @@ export class QuizTakeComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   errorMessage = '';
 
-  // Map questionId -> answerId đã chọn
+  // Map questionId -> selected answerId
   selectedAnswers: Map<string, string> = new Map();
-  // Map questionId -> Set<answerId> cho MultipleChoice
+  // Map questionId -> Set<answerId> for MultipleChoice
   selectedMultiple: Map<string, Set<string>> = new Map();
 
   // Timer
@@ -156,8 +156,8 @@ export class QuizTakeComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err.error?.message || 'Nộp bài thất bại.';
-        this.startTimer(); // resume timer nếu submit lỗi
+        this.errorMessage = err.error?.message || 'Submission failed. Please try again.';
+        this.startTimer(); // resume timer if submit fails
       }
     });
   }

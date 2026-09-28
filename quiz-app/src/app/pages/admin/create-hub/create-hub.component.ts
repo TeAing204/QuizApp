@@ -26,8 +26,8 @@ export class CreateHubComponent {
   activities: ActivityCard[] = [
     {
       icon: 'fas fa-check-square',
-      title: 'Đánh giá',
-      description: 'Câu hỏi nhanh và tương tác',
+      title: 'Assessment',
+      description: 'Interactive quizzes and evaluations',
       route: '/admin/quizzes/create',
       color: 'green',
       gradient: 'from-emerald-400 to-green-600',
@@ -36,17 +36,17 @@ export class CreateHubComponent {
     {
       icon: 'fas fa-clone',
       title: 'Flashcards',
-      description: 'Câu hỏi ở mặt trước, câu trả lời ở mặt sau',
+      description: 'Question on the front, answer on the back',
       route: null,
       color: 'purple',
       gradient: 'from-violet-400 to-purple-600',
       disabled: true,
-      badge: 'Sắp ra mắt'
+      badge: 'Coming Soon'
     }
   ];
 
   constructor(private authService: AuthService) {
     const user = this.authService.getCurrentUser();
-    this.userName = user?.firstName || user?.displayName || 'bạn';
+    this.userName = user?.firstName || user?.displayName || 'there';
   }
 }

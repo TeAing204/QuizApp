@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { UserService } from '../../../../services/user.service';
 import { UserViewModel } from '../../../../models/user.model';
+import { ConfirmService } from '../../../../services/confirm.service';
+import { ToastService } from '../../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-user-list',
@@ -26,10 +28,23 @@ export class AdminUserListComponent implements OnInit {
   sortBy = 'createdAt';
   sortOrder = 'desc';
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.loadUsers();
+    this.route.queryParams.subscribe(params => {
+      this.searchTerm = params['search'] || '';
+      this.currentPage = params['page'] ? +params['page'] : 1;
+      this.pageSize = params['pageSize'] ? +params['pageSize'] : 10;
+      this.sortBy = params['sortBy'] || 'createdAt';
+      this.sortOrder = params['sortOrder'] || 'desc';
+      this.loadUsers();
+    });
   }
 
   loadUsers(): void {
@@ -50,14 +65,29 @@ export class AdminUserListComponent implements OnInit {
     });
   }
 
+  private updateUrl(): void {
+    const queryParams: any = {};
+    if (this.searchTerm) queryParams.search = this.searchTerm;
+    if (this.currentPage > 1) queryParams.page = this.currentPage;
+    if (this.pageSize !== 10) queryParams.pageSize = this.pageSize;
+    if (this.sortBy !== 'createdAt') queryParams.sortBy = this.sortBy;
+    if (this.sortOrder !== 'desc') queryParams.sortOrder = this.sortOrder;
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true
+    });
+  }
+
   onSearch(): void {
     this.currentPage = 1;
-    this.loadUsers();
+    this.updateUrl();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadUsers();
+    this.updateUrl();
   }
 
   onSort(field: string): void {
@@ -68,14 +98,20 @@ export class AdminUserListComponent implements OnInit {
       this.sortOrder = 'asc';
     }
     this.currentPage = 1;
-    this.loadUsers();
+    this.updateUrl();
   }
 
-  deleteUser(id: string, name: string): void {
-    if (!confirm(`Bạn có chắc muốn xóa user "${name}"?`)) return;
+  async deleteUser(id: string, name: string): Promise<void> {
+    const ok = await this.confirmService.confirm({
+      title: 'Delete User',
+      message: `Are you sure you want to delete user "${name}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      type: 'danger'
+    });
+    if (!ok) return;
     this.userService.delete(id).subscribe({
-      next: () => this.loadUsers(),
-      error: (err) => alert(err.error?.message || 'Xóa user thất bại.')
+      next: () => { this.toastService.success(`User "${name}" deleted successfully!`); this.loadUsers(); },
+      error: (err) => this.toastService.error(err.error?.message || 'Failed to delete user.')
     });
   }
 

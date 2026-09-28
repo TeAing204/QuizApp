@@ -38,7 +38,7 @@ export class QuizReviewComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Không thể tải chi tiết bài làm.';
+        this.errorMessage = err.error?.message || 'Failed to load attempt details.';
         this.isLoading = false;
       }
     });
@@ -50,10 +50,10 @@ export class QuizReviewComponent implements OnInit {
 
   get gradeLabel(): string {
     const s = this.scorePercent;
-    if (s >= 90) return 'Xuất sắc';
-    if (s >= 75) return 'Tốt';
-    if (s >= 50) return 'Trung bình';
-    return 'Cần cố gắng thêm';
+    if (s >= 90) return 'Excellent';
+    if (s >= 75) return 'Good';
+    if (s >= 50) return 'Average';
+    return 'Needs Improvement';
   }
 
   get gradeBg(): string {
@@ -70,7 +70,7 @@ export class QuizReviewComponent implements OnInit {
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('vi-VN', {
+    return new Date(dateStr).toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
@@ -83,8 +83,8 @@ export class QuizReviewComponent implements OnInit {
     const diffMs = end.getTime() - start.getTime();
     const mins = Math.floor(diffMs / 60000);
     const secs = Math.floor((diffMs % 60000) / 1000);
-    if (mins > 0) return `${mins} phút ${secs} giây`;
-    return `${secs} giây`;
+    if (mins > 0) return `${mins}m ${secs}s`;
+    return `${secs}s`;
   }
 
   getAnswerClasses(answer: { isCorrect: boolean; isSelected: boolean }): string {

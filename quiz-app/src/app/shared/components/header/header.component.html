@@ -69,28 +69,9 @@
                   <i class="fas fa-history text-emerald-500 w-4"></i> Quiz History
                 </a>
                 @if (authService.isAdmin()) {
-                  <div class="px-4 py-1.5">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Admin Panel</p>
-                  </div>
-                  <a routerLink="/admin/quizzes/create" (click)="isDropdownOpen=false"
-                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-pink-500 w-4"></i> Create Quiz
-                  </a>
                   <a routerLink="/admin/quizzes" (click)="isDropdownOpen=false"
-                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-clipboard-list text-primary-500 w-4"></i> Manage Quizzes
-                  </a>
-                  <a routerLink="/admin/questions" (click)="isDropdownOpen=false"
-                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-question-circle text-accent-500 w-4"></i> Question Bank
-                  </a>
-                  <a routerLink="/admin/users" (click)="isDropdownOpen=false"
-                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-users text-blue-500 w-4"></i> Manage Users
-                  </a>
-                  <a routerLink="/admin/roles" (click)="isDropdownOpen=false"
-                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                    <i class="fas fa-user-shield text-purple-500 w-4"></i> Manage Roles
+                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-t border-gray-100">
+                    <i class="fas fa-cogs text-purple-500 w-4"></i> Admin Panel
                   </a>
                 }
                 <button (click)="logout()"

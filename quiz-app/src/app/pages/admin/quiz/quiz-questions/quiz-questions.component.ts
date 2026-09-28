@@ -6,6 +6,8 @@ import { QuizService } from '../../../../services/quiz.service';
 import { QuestionService } from '../../../../services/question.service';
 import { QuizViewModel } from '../../../../models/quiz.model';
 import { QuestionViewModel, QuizQuestionCreateDto } from '../../../../models/question.model';
+import { ConfirmService } from '../../../../services/confirm.service';
+import { ToastService } from '../../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-quiz-questions',
@@ -30,7 +32,9 @@ export class AdminQuizQuestionsComponent implements OnInit {
     private quizService: QuizService,
     private questionService: QuestionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private confirmService: ConfirmService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -76,19 +80,22 @@ export class AdminQuizQuestionsComponent implements OnInit {
   addQuestion(questionId: string): void {
     const dto: QuizQuestionCreateDto = { quizId: this.quizId, questionId };
     this.quizService.addQuestion(dto).subscribe({
-      next: () => this.loadData(),
-      error: (err) => alert(err.error?.message || 'Failed to add question.')
+      next: () => { this.toastService.success('Question added to quiz!'); this.loadData(); },
+      error: (err) => this.toastService.error(err.error?.message || 'Failed to add question.')
     });
   }
 
-  removeQuestion(questionId: string): void {
-    if (!confirm('Remove this question from quiz?')) return;
-    // questionId here is actually the QuizQuestion record — but backend uses QuizQuestion.Id
-    // We need to find the mapping. Since backend's removeQuestion expects quizQuestionId,
-    // and we only have questionId, we pass questionId as quizQuestionId for now.
+  async removeQuestion(questionId: string): Promise<void> {
+    const ok = await this.confirmService.confirm({
+      title: 'Remove Question',
+      message: 'Remove this question from quiz?',
+      confirmText: 'Remove',
+      type: 'warning'
+    });
+    if (!ok) return;
     this.quizService.removeQuestion(this.quizId, questionId).subscribe({
-      next: () => this.loadData(),
-      error: () => alert('Failed to remove question.')
+      next: () => { this.toastService.success('Question removed from quiz!'); this.loadData(); },
+      error: () => this.toastService.error('Failed to remove question.')
     });
   }
 

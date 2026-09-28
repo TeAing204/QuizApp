@@ -27,18 +27,18 @@ export class ContactComponent {
       return;
     }
 
-    // Log form data ra console theo yêu cầu tài liệu Task 2
+    // Log form data to console as required
     console.log('=== Contact Form Submitted ===');
     console.log(this.contactForm.value);
 
     this.isSubmitted = true;
     this.contactForm.reset();
 
-    // Ẩn thông báo sau 5 giây
+    // Hide notification after 5 seconds
     setTimeout(() => this.isSubmitted = false, 5000);
   }
 
-  /** Helper kiểm tra control có lỗi và đã touched */
+  /** Helper to check if control has error and has been touched */
   hasError(controlName: string, errorType: string): boolean {
     const control = this.contactForm.get(controlName);
     return !!control && control.hasError(errorType) && control.touched;

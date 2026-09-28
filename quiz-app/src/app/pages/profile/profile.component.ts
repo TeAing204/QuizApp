@@ -60,15 +60,15 @@ export class ProfileComponent implements OnInit {
     this.passwordSuccess = '';
 
     if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
-      this.passwordError = 'Vui lòng điền đầy đủ các trường.';
+      this.passwordError = 'Please fill in all fields.';
       return;
     }
     if (this.newPassword.length < 6) {
-      this.passwordError = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+      this.passwordError = 'New password must be at least 6 characters.';
       return;
     }
     if (this.newPassword !== this.confirmPassword) {
-      this.passwordError = 'Mật khẩu xác nhận không khớp.';
+      this.passwordError = 'Password confirmation does not match.';
       return;
     }
 
@@ -81,7 +81,7 @@ export class ProfileComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.isChangingPassword = false;
-        this.passwordSuccess = 'Đổi mật khẩu thành công!';
+        this.passwordSuccess = 'Password changed successfully!';
         this.oldPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isChangingPassword = false;
-        this.passwordError = err.error?.message || 'Đổi mật khẩu thất bại.';
+        this.passwordError = err.error?.message || 'Failed to change password.';
       }
     });
   }
@@ -126,7 +126,7 @@ export class ProfileComponent implements OnInit {
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('vi-VN', {
+    return new Date(dateStr).toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });

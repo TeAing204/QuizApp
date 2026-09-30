@@ -39,7 +39,13 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+        if (err.status === 0) {
+          this.errorMessage = 'Unable to connect to the server. Please check your network connection.';
+        } else if (err.status === 401) {
+          this.errorMessage = err.error?.message || 'Invalid username or password.';
+        } else {
+          this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+        }
       }
     });
   }

@@ -36,3 +36,4 @@ namespace QuizApp.WebAPI.Controllers
         }
     }
 }
+

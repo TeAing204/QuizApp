@@ -26,9 +26,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        // Token hết hạn hoặc không hợp lệ → logout và redirect
-        authService.logout();
-        router.navigate(['/auth/login']);
+        // Skip 401 handling for auth endpoints (login/register)
+        // so the component can display the error message to the user
+        const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
+        if (!isAuthEndpoint) {
+          authService.logout();
+          router.navigate(['/auth/login']);
+        }
       }
       return throwError(() => error);
     })

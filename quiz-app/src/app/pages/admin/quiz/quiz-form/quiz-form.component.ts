@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { QuizService } from '../../../../services/quiz.service';
 import { QuestionService } from '../../../../services/question.service';
+import { FileService } from '../../../../services/file.service';
 import { QuizCreateDto, QuizEditDto } from '../../../../models/quiz.model';
 import { QuestionViewModel, QuestionCreateDto, AnswerCreateDto } from '../../../../models/question.model';
 import { ConfirmService } from '../../../../services/confirm.service';
@@ -52,6 +53,10 @@ export class AdminQuizFormComponent implements OnInit {
   };
   showSettings = false;
 
+  // Thumbnail upload
+  thumbnailPreview = '';
+  isUploadingThumbnail = false;
+
   // Question types
   questionTypes: QuestionTypeOption[] = [
     { type: 'SingleChoice', label: 'Single Choice', icon: 'fas fa-check-square', color: 'bg-emerald-500', description: 'Choose 1 correct answer' },
@@ -81,6 +86,7 @@ export class AdminQuizFormComponent implements OnInit {
   constructor(
     private quizService: QuizService,
     private questionService: QuestionService,
+    private fileService: FileService,
     private route: ActivatedRoute,
     private router: Router,
     private confirmService: ConfirmService,
@@ -107,6 +113,9 @@ export class AdminQuizFormComponent implements OnInit {
           thumbnailUrl: quiz.thumbnailUrl || '',
           isActive: quiz.isActive
         };
+        if (quiz.thumbnailUrl) {
+          this.thumbnailPreview = this.fileService.getFullUrl(quiz.thumbnailUrl);
+        }
       },
       error: () => this.router.navigate(['/admin/quizzes'])
     });
@@ -395,5 +404,61 @@ export class AdminQuizFormComponent implements OnInit {
   getQuestionTypeColor(type: string): string {
     const found = this.questionTypes.find(t => t.type === type);
     return found?.color || 'bg-gray-500';
+  }
+
+  // ===== THUMBNAIL UPLOAD =====
+  onThumbnailSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+
+    // Validate client-side
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.errorMessage = 'Chỉ hỗ trợ file ảnh (JPG, PNG, GIF, WEBP).';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.errorMessage = 'Kích thước ảnh không được vượt quá 5MB.';
+      return;
+    }
+
+    this.isUploadingThumbnail = true;
+    this.errorMessage = '';
+
+    // Preview ngay lập tức
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.thumbnailPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload lên server
+    this.fileService.uploadImage(file).subscribe({
+      next: (res) => {
+        this.formData.thumbnailUrl = res.url;
+        this.thumbnailPreview = this.fileService.getFullUrl(res.url);
+        this.isUploadingThumbnail = false;
+        this.toastService.success('Ảnh đã được tải lên!');
+      },
+      error: (err) => {
+        this.isUploadingThumbnail = false;
+        this.errorMessage = err.error?.message || 'Tải ảnh lên thất bại.';
+        this.thumbnailPreview = '';
+      }
+    });
+
+    // Reset input
+    input.value = '';
+  }
+
+  removeThumbnail(): void {
+    this.formData.thumbnailUrl = '';
+    this.thumbnailPreview = '';
+  }
+
+  getFullThumbnailUrl(url: string): string {
+    return this.fileService.getFullUrl(url);
   }
 }

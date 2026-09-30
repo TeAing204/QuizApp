@@ -2,7 +2,7 @@
   <!-- Thumbnail -->
   <div class="relative h-48 bg-gradient-to-br from-primary-400 via-primary-500 to-accent-600 overflow-hidden">
     @if (quiz.thumbnailUrl) {
-      <img [src]="quiz.thumbnailUrl" [alt]="quiz.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+      <img [src]="getFullThumbnailUrl(quiz.thumbnailUrl!)" [alt]="quiz.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
     } @else {
       <div class="w-full h-full flex items-center justify-center">
         <i class="fas fa-clipboard-list text-white/30 text-6xl group-hover:scale-110 transition-transform duration-500"></i>

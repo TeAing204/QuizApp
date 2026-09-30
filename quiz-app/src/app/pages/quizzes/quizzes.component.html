@@ -87,7 +87,7 @@
           <!-- Thumbnail -->
           <div class="relative overflow-hidden h-40 bg-gradient-to-br from-primary-100 to-accent-100">
             @if (quiz.thumbnailUrl) {
-              <img [src]="quiz.thumbnailUrl" [alt]="quiz.title"
+              <img [src]="getFullThumbnailUrl(quiz.thumbnailUrl!)" [alt]="quiz.title"
                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             } @else {
               <div class="w-full h-full flex items-center justify-center">

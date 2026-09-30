@@ -14,5 +14,8 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public int Duration { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        [MaxLength(500)]
+        public string? ThumbnailUrl { get; set; }
     }
 }

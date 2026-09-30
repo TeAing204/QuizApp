@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { QuizService } from '../../services/quiz.service';
 import { AuthService } from '../../services/auth.service';
+import { FileService } from '../../services/file.service';
 import { QuizViewModel } from '../../models/quiz.model';
 import { QuizCardComponent } from '../../shared/components/quiz-card/quiz-card.component';
 import { DurationFormatPipe } from '../../shared/pipes/duration-format.pipe';
@@ -25,6 +26,7 @@ export class QuizzesComponent implements OnInit {
   constructor(
     private quizService: QuizService,
     public authService: AuthService,
+    private fileService: FileService,
     private router: Router
   ) {}
 
@@ -83,5 +85,9 @@ export class QuizzesComponent implements OnInit {
         this.codeError = err.error?.message || 'Invalid or non-existent quiz code.';
       }
     });
+  }
+
+  getFullThumbnailUrl(url: string): string {
+    return this.fileService.getFullUrl(url);
   }
 }

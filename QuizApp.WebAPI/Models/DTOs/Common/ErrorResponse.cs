@@ -1,9 +1,7 @@
 namespace QuizApp.WebAPI.Models.DTOs.Common
 {
-    /// <summary>
-    /// DTO chuẩn hóa response lỗi cho toàn bộ API.
-    /// Mọi lỗi đều trả về format này để frontend dễ parse.
-    /// </summary>
+    // DTO chuẩn hóa response lỗi cho toàn bộ API.
+    // Mọi lỗi đều trả về format này để frontend dễ parse.
     public class ErrorResponse
     {
         public int StatusCode { get; set; }

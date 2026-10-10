@@ -2,9 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.Auth
 {
-    /// <summary>
-    /// DTO cho request đăng ký tài khoản mới.
-    /// </summary>
+    // DTO cho request đăng ký tài khoản mới.
     public class RegisterDto
     {
         [Required(ErrorMessage = "First name is required")]

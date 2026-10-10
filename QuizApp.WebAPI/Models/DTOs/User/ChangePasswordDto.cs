@@ -2,9 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.User
 {
-    /// <summary>
-    /// DTO cho chức năng đổi mật khẩu.
-    /// </summary>
+    // DTO cho chức năng đổi mật khẩu.
     public class ChangePasswordDto
     {
         [Required]

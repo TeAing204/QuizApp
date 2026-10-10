@@ -5,6 +5,7 @@ using QuizApp.WebAPI.Models.DTOs.Common;
 using QuizApp.WebAPI.Models.DTOs.Role;
 using QuizApp.WebAPI.Services.Interfaces;
 using QuizApp.WebAPI.Exceptions;
+using QuizApp.WebAPI.Models.Entities;
 
 namespace QuizApp.WebAPI.Services
 {
@@ -36,6 +37,8 @@ namespace QuizApp.WebAPI.Services
             query = p.SortBy?.ToLower() switch
             {
                 "name" => p.SortOrder == "asc" ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name),
+                "isactive" => p.SortOrder == "asc" ? query.OrderBy(r => r.IsActive) : query.OrderByDescending(r => r.IsActive),
+                "description" => p.SortOrder == "asc" ? query.OrderBy(r => r.Description) : query.OrderByDescending(r => r.Description),
                 _ => p.SortOrder == "asc" ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name)
             };
 
@@ -62,7 +65,7 @@ namespace QuizApp.WebAPI.Services
             if (await _context.Roles.AnyAsync(r => r.Name == dto.Name))
                 throw new ConflictException($"Role name '{dto.Name}' already exists.");
 
-            var role = _mapper.Map<Models.Entities.Role>(dto);
+            var role = _mapper.Map<Role>(dto);
             _context.Roles.Add(role);
             return await _context.SaveChangesAsync() > 0;
         }

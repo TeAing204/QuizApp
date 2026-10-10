@@ -1,8 +1,6 @@
 namespace QuizApp.WebAPI.Models.DTOs.Quiz
 {
-    /// <summary>
-    /// DTO response sau khi nộp bài, trả về kết quả cho user.
-    /// </summary>
+    // DTO response sau khi nộp bài, trả về kết quả cho user.
     public class QuizResultDto
     {
         public Guid QuizAttemptId { get; set; }

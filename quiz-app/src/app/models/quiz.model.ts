@@ -10,6 +10,8 @@ export interface QuizViewModel {
   duration: number;
   thumbnailUrl?: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
   numberOfQuestions: number;
 }
 

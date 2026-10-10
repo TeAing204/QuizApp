@@ -74,7 +74,6 @@ namespace QuizApp.WebAPI.Services
 
             var user = _mapper.Map<User>(dto);
             user.PasswordHash = PasswordHasher.HashPassword(dto.Password);
-            user.DisplayName = $"{dto.FirstName} {dto.LastName}";
             user.RoleId = dto.RoleId ?? DataSeeder.UserRoleId; // Admin chọn role, hoặc mặc định User
 
             _context.Users.Add(user);
@@ -93,7 +92,6 @@ namespace QuizApp.WebAPI.Services
                 throw new ConflictException($"Email '{dto.Email}' already exists.");
 
             _mapper.Map(dto, user);
-            user.DisplayName = $"{dto.FirstName} {dto.LastName}";
             if (dto.RoleId.HasValue) user.RoleId = dto.RoleId.Value;
             user.UpdatedAt = DateTime.UtcNow;
             return await _context.SaveChangesAsync() > 0;
@@ -115,7 +113,7 @@ namespace QuizApp.WebAPI.Services
 
             // Verify old password
             if (!PasswordHasher.VerifyPassword(dto.OldPassword, user.PasswordHash))
-                throw new BadRequestException("Mật khẩu cũ không đúng.");
+                throw new BadRequestException("Old password is incorrect.");
 
             // Hash & save new password
             user.PasswordHash = PasswordHasher.HashPassword(dto.NewPassword);

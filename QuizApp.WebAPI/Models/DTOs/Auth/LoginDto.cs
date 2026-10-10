@@ -2,9 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.Auth
 {
-    /// <summary>
-    /// DTO cho request đăng nhập.
-    /// </summary>
+    // DTO cho request đăng nhập.
     public class LoginDto
     {
         [Required(ErrorMessage = "Username is required")]

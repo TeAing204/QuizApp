@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizApp.WebAPI.Models.DTOs.Common
+namespace QuizApp.WebAPI.Models.DTOs.Quiz
 {
-    /// <summary>
-    /// DTO để gán câu hỏi vào quiz (admin).
-    /// </summary>
+    // DTO để gán câu hỏi vào quiz (admin).
     public class QuizQuestionCreateDto
     {
         [Required]
@@ -14,9 +12,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Common
         public Guid QuestionId { get; set; }
     }
 
-    /// <summary>
-    /// DTO cho mỗi câu trả lời trong submission.
-    /// </summary>
+    // DTO cho mỗi câu trả lời trong submission.
     public class UserAnswerSubmissionDto
     {
         [Required]

@@ -1,9 +1,6 @@
 namespace QuizApp.WebAPI.Exceptions
 {
-    /// <summary>
-    /// Ném khi không tìm thấy tài nguyên (Entity không tồn tại).
-    /// Maps to HTTP 404 Not Found.
-    /// </summary>
+    // Maps to HTTP 404 Not Found.
     public class NotFoundException : Exception
     {
         public NotFoundException(string message) : base(message) { }

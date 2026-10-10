@@ -7,10 +7,8 @@ using QuizApp.WebAPI.Models.Entities;
 
 namespace QuizApp.WebAPI.Security
 {
-    /// <summary>
-    /// Tạo JWT token từ thông tin user.
-    /// Token chứa các claims: userId, userName, email, role.
-    /// </summary>
+    // Tạo JWT token từ thông tin user.
+    // Token chứa các claims: userId, userName, email, role.
     public class JwtTokenProvider
     {
         private readonly JwtSettings _jwtSettings;
@@ -20,11 +18,7 @@ namespace QuizApp.WebAPI.Security
             _jwtSettings = jwtSettings.Value;
         }
 
-        /// <summary>
-        /// Tạo JWT token cho user đã xác thực.
-        /// </summary>
-        /// <param name="user">User entity (phải include Role).</param>
-        /// <returns>JWT token string và thời gian hết hạn.</returns>
+        // Tạo JWT token cho user đã xác thực.
         public (string Token, DateTime Expires) GenerateToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));

@@ -1,8 +1,6 @@
 namespace QuizApp.WebAPI.Models.DTOs.User
 {
-    /// <summary>
-    /// DTO hiển thị thông tin user (dùng cho cả response API lẫn LoginResponse).
-    /// </summary>
+    // DTO hiển thị thông tin user (dùng cho cả response API lẫn LoginResponse).
     public class UserViewModel
     {
         public Guid Id { get; set; }
@@ -15,10 +13,6 @@ namespace QuizApp.WebAPI.Models.DTOs.User
         public DateTime? DateOfBirth { get; set; }
         public string? Avatar { get; set; }
         public bool IsActive { get; set; }
-
-        /// <summary>
-        /// Tên role của user (VD: "User", "Administrator").
-        /// </summary>
         public string Roles { get; set; } = string.Empty;
     }
 }

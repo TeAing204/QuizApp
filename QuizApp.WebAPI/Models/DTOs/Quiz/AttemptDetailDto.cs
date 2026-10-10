@@ -1,8 +1,6 @@
 namespace QuizApp.WebAPI.Models.DTOs.Quiz
 {
-    /// <summary>
-    /// DTO chi tiết một lần làm bài — trả về từng câu hỏi + đáp án đã chọn.
-    /// </summary>
+    // DTO chi tiết một lần làm bài — trả về từng câu hỏi + đáp án đã chọn.
     public class AttemptDetailDto
     {
         public Guid QuizAttemptId { get; set; }
@@ -15,9 +13,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public List<AttemptQuestionDetailDto> Questions { get; set; } = new();
     }
 
-    /// <summary>
-    /// Chi tiết từng câu hỏi trong lần làm bài.
-    /// </summary>
+    // Chi tiết từng câu hỏi trong lần làm bài.
     public class AttemptQuestionDetailDto
     {
         public string QuestionContent { get; set; } = string.Empty;
@@ -26,9 +22,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public List<AttemptAnswerDetailDto> Answers { get; set; } = new();
     }
 
-    /// <summary>
-    /// Chi tiết từng đáp án: nội dung, đúng/sai, user đã chọn hay chưa.
-    /// </summary>
+    // Chi tiết từng đáp án: nội dung, đúng/sai, user đã chọn hay chưa.
     public class AttemptAnswerDetailDto
     {
         public string Content { get; set; } = string.Empty;

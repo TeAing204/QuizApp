@@ -14,10 +14,7 @@ namespace QuizApp.WebAPI.Controllers
             _env = env;
         }
 
-        /// <summary>
-        /// Upload ảnh (thumbnail quiz, avatar user, v.v.)
-        /// POST /api/files/upload
-        /// </summary>
+        // Upload ảnh (thumbnail quiz, avatar user, v.v.)
         [HttpPost("upload")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Upload(IFormFile file)

@@ -2,9 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.User
 {
-    /// <summary>
-    /// DTO cho admin tạo user mới.
-    /// </summary>
+    // DTO cho admin tạo user mới.
     public class UserCreateDto
     {
         [Required] [MaxLength(50)]
@@ -32,9 +30,7 @@ namespace QuizApp.WebAPI.Models.DTOs.User
 
         public bool IsActive { get; set; } = true;
 
-        /// <summary>
-        /// Admin chọn role khi tạo user. Nếu không truyền, mặc định là role User.
-        /// </summary>
+        // Admin chọn role khi tạo user. Nếu không truyền, mặc định là role User.
         public Guid? RoleId { get; set; }
     }
 }

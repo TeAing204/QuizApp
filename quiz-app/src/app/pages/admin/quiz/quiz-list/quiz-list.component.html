@@ -49,6 +49,9 @@
               <th (click)="onSort('isactive')" class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-primary-600">
                 Status <i class="fas" [class.fa-sort-up]="sortBy==='isactive' && sortOrder==='asc'" [class.fa-sort-down]="sortBy==='isactive' && sortOrder==='desc'" [class.fa-sort]="sortBy!=='isactive'"></i>
               </th>
+              <th (click)="onSort('createdAt')" class="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-primary-600">
+                Created At <i class="fas" [class.fa-sort-up]="sortBy==='createdAt' && sortOrder==='asc'" [class.fa-sort-down]="sortBy==='createdAt' && sortOrder==='desc'" [class.fa-sort]="sortBy!=='createdAt'"></i>
+              </th>
               <th class="text-center px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -79,6 +82,9 @@
                         [class]="quiz.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
                     {{ quiz.isActive ? 'Active' : 'Inactive' }}
                   </span>
+                </td>
+                <td class="text-center px-4 py-4">
+                  <span class="text-sm text-gray-600">{{ quiz.createdAt | date:'dd/MM/yyyy' }}</span>
                 </td>
                 <td class="text-center px-6 py-4">
                   <div class="flex items-center justify-center gap-2">

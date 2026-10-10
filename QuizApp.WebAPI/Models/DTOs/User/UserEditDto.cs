@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.User
 {
-    /// <summary>
-    /// DTO cho admin cập nhật user.
-    /// Lưu ý: Không cho phép sửa password qua endpoint này (theo yêu cầu tài liệu).
-    /// </summary>
+    // DTO cho admin cập nhật user.
+    // Không cho phép sửa password qua endpoint này.
     public class UserEditDto
     {
         [Required]
@@ -30,9 +28,7 @@ namespace QuizApp.WebAPI.Models.DTOs.User
 
         public bool IsActive { get; set; } = true;
 
-        /// <summary>
-        /// Admin có thể đổi role cho user.
-        /// </summary>
+        // Admin có thể đổi role cho user.
         public Guid? RoleId { get; set; }
     }
 }

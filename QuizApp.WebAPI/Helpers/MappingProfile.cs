@@ -9,61 +9,60 @@ using QuizApp.WebAPI.Models.DTOs.Role;
 
 namespace QuizApp.WebAPI.Helpers
 {
-    /// <summary>
-    /// AutoMapper profile: định nghĩa mapping giữa Entity và DTO.
-    /// </summary>
+    // AutoMapper profile: định nghĩa mapping giữa Entity và DTO.
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
             // ===== Role =====
-            CreateMap<Models.Entities.Role, RoleViewModel>();
-            CreateMap<RoleCreateDto, Models.Entities.Role>();
-            CreateMap<RoleEditDto, Models.Entities.Role>();
+            CreateMap<Role, RoleViewModel>();
+            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleEditDto, Role>();
 
             // ===== User =====
-            CreateMap<Models.Entities.User, UserViewModel>()
+            CreateMap<User, UserViewModel>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Role.Name));
 
-            CreateMap<UserCreateDto, Models.Entities.User>()
+            CreateMap<UserCreateDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())  // Hash riêng trong service
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
-            CreateMap<UserEditDto, Models.Entities.User>()
-                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+            CreateMap<UserEditDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
-            CreateMap<RegisterDto, Models.Entities.User>()
+            CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
             // ===== Quiz =====
-            CreateMap<Models.Entities.Quiz, QuizViewModel>();
-            CreateMap<QuizCreateDto, Models.Entities.Quiz>();
-            CreateMap<QuizEditDto, Models.Entities.Quiz>();
+            CreateMap<Quiz, QuizViewModel>();
+            CreateMap<QuizCreateDto, Quiz>();
+            CreateMap<QuizEditDto, Quiz>();
 
-            CreateMap<Models.Entities.Quiz, QuizPrepareInfoDto>();
-            CreateMap<Models.Entities.Quiz, QuizForTestDto>();
+            CreateMap<Quiz, QuizPrepareInfoDto>();
+            CreateMap<Quiz, QuizForTestDto>();
 
             // ===== Question =====
-            CreateMap<Models.Entities.Question, QuestionViewModel>()
+            CreateMap<Question, QuestionViewModel>()
                 .ForMember(dest => dest.QuestionType, opt => opt.MapFrom(src => src.QuestionType.ToString()));
 
-            CreateMap<QuestionCreateDto, Models.Entities.Question>()
+            CreateMap<QuestionCreateDto, Question>()
                 .ForMember(dest => dest.QuestionType, opt => opt.MapFrom(src => Enum.Parse<QuestionType>(src.QuestionType)));
 
-            CreateMap<QuestionEditDto, Models.Entities.Question>()
+            CreateMap<QuestionEditDto, Question>()
                 .ForMember(dest => dest.QuestionType, opt => opt.MapFrom(src => Enum.Parse<QuestionType>(src.QuestionType)));
 
-            CreateMap<Models.Entities.Question, QuestionForTestDto>()
+            CreateMap<Question, QuestionForTestDto>()
                 .ForMember(dest => dest.QuestionType, opt => opt.MapFrom(src => src.QuestionType.ToString()));
 
             // ===== Answer =====
-            CreateMap<Models.Entities.Answer, AnswerViewModel>();
-            CreateMap<AnswerCreateDto, Models.Entities.Answer>();
-            CreateMap<AnswerEditDto, Models.Entities.Answer>();
+            CreateMap<Answer, AnswerViewModel>();
+            CreateMap<AnswerCreateDto, Answer>();
+            CreateMap<AnswerEditDto, Answer>();
 
             // Answer cho bài thi (giấu isCorrect)
-            CreateMap<Models.Entities.Answer, AnswerForTestDto>();
+            CreateMap<Answer, AnswerForTestDto>();
         }
     }
 }

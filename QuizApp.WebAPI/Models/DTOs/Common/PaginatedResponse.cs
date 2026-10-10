@@ -1,8 +1,6 @@
 namespace QuizApp.WebAPI.Models.DTOs.Common
 {
-    /// <summary>
-    /// Generic paginated response — tương đương Page&lt;T&gt; trong Spring Boot.
-    /// </summary>
+    // Generic paginated response
     public class PaginatedResponse<T>
     {
         public List<T> Content { get; set; } = new();

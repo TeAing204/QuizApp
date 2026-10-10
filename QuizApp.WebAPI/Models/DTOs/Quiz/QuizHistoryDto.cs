@@ -1,9 +1,7 @@
 namespace QuizApp.WebAPI.Models.DTOs.Quiz
 {
-    /// <summary>
-    /// DTO trả về lịch sử làm bài của user.
-    /// Bao gồm thông tin quiz + kết quả từng lần thi.
-    /// </summary>
+    // DTO trả về lịch sử làm bài của user.
+    // Bao gồm thông tin quiz + kết quả từng lần thi.
     public class QuizHistoryDto
     {
         public Guid QuizAttemptId { get; set; }
@@ -19,9 +17,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public DateTime? SubmittedAt { get; set; }
         public string? QuizCode { get; set; }
 
-        /// <summary>
-        /// Trạng thái: "Completed" / "InProgress"
-        /// </summary>
+        // Trạng thái: "Completed" / "InProgress"
         public string Status => SubmittedAt.HasValue ? "Completed" : "InProgress";
     }
 }

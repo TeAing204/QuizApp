@@ -2,9 +2,7 @@ using QuizApp.WebAPI.Models.DTOs.User;
 
 namespace QuizApp.WebAPI.Models.DTOs.Quiz
 {
-    /// <summary>
-    /// DTO cho request chuẩn bị quiz (trước khi bắt đầu làm bài).
-    /// </summary>
+    // DTO cho request chuẩn bị quiz (trước khi bắt đầu làm bài).
     public class PrepareQuizDto
     {
         public Guid UserId { get; set; }
@@ -12,9 +10,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public string? QuizCode { get; set; }
     }
 
-    /// <summary>
-    /// DTO response chứa thông tin quiz đã chuẩn bị.
-    /// </summary>
+    // DTO response chứa thông tin quiz đã chuẩn bị.
     public class QuizPrepareInfoDto
     {
         public Guid Id { get; set; }

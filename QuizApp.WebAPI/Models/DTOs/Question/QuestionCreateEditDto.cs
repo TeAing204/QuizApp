@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.Question
 {
-    /// <summary>
-    /// DTO đơn giản cho đáp án khi tạo inline cùng câu hỏi.
-    /// Không cần QuestionId vì sẽ tự gán trong service.
-    /// </summary>
+    // DTO đơn giản cho đáp án khi tạo inline cùng câu hỏi.
+    // Không cần QuestionId vì sẽ tự gán trong service.
     public class AnswerCreateInlineDto
     {
         [Required] [MaxLength(1000)]
@@ -25,9 +23,7 @@ namespace QuizApp.WebAPI.Models.DTOs.Question
 
         public bool IsActive { get; set; } = true;
 
-        /// <summary>
-        /// Danh sách đáp án tạo kèm (optional). Nếu có → tạo câu hỏi + answers trong 1 lần gọi.
-        /// </summary>
+        // Danh sách đáp án tạo kèm (optional). 
         public List<AnswerCreateInlineDto>? Answers { get; set; }
     }
 

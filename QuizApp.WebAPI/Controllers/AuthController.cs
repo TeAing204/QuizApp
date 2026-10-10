@@ -15,9 +15,7 @@ namespace QuizApp.WebAPI.Controllers
             _authService = authService;
         }
 
-        /// <summary>
-        /// Đăng nhập và nhận JWT token.
-        /// </summary>
+        // Đăng nhập và nhận JWT token.
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
@@ -25,9 +23,7 @@ namespace QuizApp.WebAPI.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Đăng ký tài khoản mới (tự động gán role User).
-        /// </summary>
+        // Đăng ký tài khoản mới 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {

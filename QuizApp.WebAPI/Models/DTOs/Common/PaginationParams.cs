@@ -2,10 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizApp.WebAPI.Models.DTOs.Common
 {
-    /// <summary>
-    /// Tham số phân trang, tìm kiếm, sắp xếp — bind từ query string.
-    /// Tương đương @RequestParam trong Spring Boot.
-    /// </summary>
+    // Tham số phân trang, tìm kiếm, sắp xếp — bind từ query string.
     public class PaginationParams
     {
         public string? Search { get; set; }
@@ -18,6 +15,6 @@ namespace QuizApp.WebAPI.Models.DTOs.Common
 
         public string SortBy { get; set; } = "createdAt";
 
-        public string SortOrder { get; set; } = "desc"; // "asc" or "desc"
+        public string SortOrder { get; set; } = "desc"; 
     }
 }

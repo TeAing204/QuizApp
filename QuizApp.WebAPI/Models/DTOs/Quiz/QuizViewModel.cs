@@ -8,6 +8,8 @@ namespace QuizApp.WebAPI.Models.DTOs.Quiz
         public int Duration { get; set; }
         public string? ThumbnailUrl { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public int NumberOfQuestions { get; set; }
     }
 }
